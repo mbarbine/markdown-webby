@@ -72,12 +72,11 @@ interface CustomNodeData {
   isSelected: boolean
   isHighlighted: boolean
   isCollapsed: boolean
-  onToggleCollapse: (nodeId: string) => void
 }
 
 function CustomNode({ data, id }: NodeProps<CustomNodeData>) {
-  const { markdownNode, isSelected, isHighlighted, isCollapsed, onToggleCollapse } = data
-  const { selectNode, hoverNode } = useMarkdown()
+  const { markdownNode, isSelected, isHighlighted, isCollapsed } = data
+  const { selectNode, hoverNode, toggleNodeCollapse } = useMarkdown()
   const nodeConfig = markdownNodeTypes[markdownNode.type] || { label: "Unknown", color: "gray" }
   
   const text = Array.isArray(markdownNode.text) 
@@ -127,7 +126,7 @@ function CustomNode({ data, id }: NodeProps<CustomNodeData>) {
           <button
             onClick={(e) => {
               e.stopPropagation()
-              onToggleCollapse(id)
+              toggleNodeCollapse(id)
             }}
             className="ml-auto text-xs text-muted-foreground hover:text-foreground"
           >
@@ -319,7 +318,6 @@ function GraphViewerInner() {
             isSelected: selectedNodeId === node.id,
             isHighlighted: highlightedNodes.includes(node.id),
             isCollapsed: collapsedSet.has(node.id),
-            onToggleCollapse: toggleNodeCollapse,
           } as CustomNodeData,
         }
       })
@@ -344,7 +342,7 @@ function GraphViewerInner() {
 
     setNodes(flowNodes)
     setEdges(flowEdges)
-  }, [graph, selectedNodeId, highlightedNodes, collapsedNodes, viewSettings, toggleNodeCollapse, setNodes, setEdges])
+  }, [graph, selectedNodeId, highlightedNodes, collapsedNodes, viewSettings, setNodes, setEdges])
 
   return (
     <div ref={containerRef} className="h-full w-full graph-canvas">
