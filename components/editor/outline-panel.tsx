@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useEffect, useState } from "react"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -126,6 +126,9 @@ function OutlineItemComponent({ item, level, selectedId, collapsedIds, onSelect,
 }
 
 export function OutlinePanel() {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   const { graph, selectedNodeId, selectNode, collapsedNodes, toggleNodeCollapse } = useMarkdown()
 
   const outline = useMemo(() => {
@@ -181,6 +184,9 @@ export function OutlinePanel() {
   }, [graph])
 
   const collapsedSet = useMemo(() => new Set(collapsedNodes), [collapsedNodes])
+
+  // Avoid hydration mismatch — Zustand persisted state differs between server/client
+  if (!mounted) return null
 
   if (outline.length === 0) {
     return (

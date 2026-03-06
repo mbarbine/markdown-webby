@@ -1,307 +1,161 @@
 "use client"
 
-import { useEffect } from "react"
-import {
-  ReactFlow,
+import { useEffect, useMemo, useRef } from "react"
+import ReactFlow, {
   ReactFlowProvider,
-  Node,
-  Edge,
   Background,
   Controls,
   MiniMap,
   useNodesState,
   useEdgesState,
-  useReactFlow,
-  NodeProps,
-  Handle,
-  Position,
-  MarkerType,
   Panel,
+  MarkerType,
+  BackgroundVariant,
+  type Node,
+  type Edge,
+  type NodeProps,
 } from "reactflow"
 import "reactflow/dist/style.css"
+import dagre from "@dagrejs/dagre"
 import { useMarkdown } from "@/lib/store/use-markdown"
-import { MarkdownNode } from "@/lib/markdown/parser"
-import { markdownNodeTypes } from "@/lib/platphorm/config"
 import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
-import {
-  Heading1,
-  FileText,
-  Code2,
-  Link,
-  Image,
-  List,
-  Quote,
-  Table,
-  Minus,
-  CheckSquare,
-  Hash,
-} from "lucide-react"
+import type { MarkdownNode } from "@/lib/markdown/parser"
 
-const nodeTypeIcons: Record<string, React.ReactNode> = {
-  heading: <Heading1 className="h-3.5 w-3.5" />,
-  paragraph: <FileText className="h-3.5 w-3.5" />,
-  codeBlock: <Code2 className="h-3.5 w-3.5" />,
-  code: <Code2 className="h-3.5 w-3.5" />,
-  link: <Link className="h-3.5 w-3.5" />,
-  image: <Image className="h-3.5 w-3.5" />,
-  list: <List className="h-3.5 w-3.5" />,
-  listItem: <List className="h-3.5 w-3.5" />,
-  blockquote: <Quote className="h-3.5 w-3.5" />,
-  table: <Table className="h-3.5 w-3.5" />,
-  thematicBreak: <Minus className="h-3.5 w-3.5" />,
-  task: <CheckSquare className="h-3.5 w-3.5" />,
+// ─── Node type colours ──────────────────────────────────────────────────────
+const NODE_COLOURS: Record<string, string> = {
+  heading:    "hsl(142 71% 45%)",   // emerald
+  paragraph:  "hsl(215 20% 65%)",   // muted blue-grey
+  codeBlock:  "hsl(270 60% 60%)",   // violet
+  list:       "hsl(199 89% 48%)",   // sky
+  blockquote: "hsl(38 92% 50%)",    // amber
+  table:      "hsl(316 68% 55%)",   // pink
+  image:      "hsl(173 80% 40%)",   // teal
+  link:       "hsl(142 71% 45%)",   // emerald (same as heading)
+  thematicBreak: "hsl(215 20% 50%)",
+  default:    "hsl(215 20% 55%)",
 }
 
-const nodeColorClasses: Record<string, string> = {
-  heading: "border-emerald-500/70 bg-emerald-500/10",
-  paragraph: "border-border/60 bg-card",
-  codeBlock: "border-violet-500/70 bg-violet-500/10",
-  code: "border-violet-500/70 bg-violet-500/10",
-  link: "border-blue-500/70 bg-blue-500/10",
-  image: "border-pink-500/70 bg-pink-500/10",
-  list: "border-amber-500/70 bg-amber-500/10",
-  listItem: "border-amber-400/50 bg-amber-500/5",
-  blockquote: "border-purple-500/70 bg-purple-500/10",
-  table: "border-teal-500/70 bg-teal-500/10",
-  thematicBreak: "border-zinc-500/50 bg-zinc-500/10",
-  task: "border-green-500/70 bg-green-500/10",
-}
+// ─── Custom node component ───────────────────────────────────────────────────
+// `useMarkdown` is called here so it is NOT in the nodeTypes object reference
+// itself — the component is defined once at module scope, never re-created.
+function MarkdownNodeComponent({ data, id }: NodeProps<{ markdownNode: MarkdownNode; isSelected: boolean; isHighlighted: boolean }>) {
+  const { selectNode } = useMarkdown()
+  const node = data.markdownNode
+  const colour = NODE_COLOURS[node.type] ?? NODE_COLOURS.default
 
-const NODE_W = 210
-const NODE_H = 90
-const H_GAP = 80
-const V_GAP = 20
+  const label = useMemo(() => {
+    const raw = Array.isArray(node.text) ? node.text.join(" ") : node.text
+    if (!raw || raw === "Document") return node.type
+    return raw.length > 48 ? raw.slice(0, 45) + "…" : raw
+  }, [node.text, node.type])
 
-type GraphEdge = { from: string; to: string; id: string }
-
-function computeLayout(
-  graphNodes: MarkdownNode[],
-  graphEdges: GraphEdge[],
-  visibleIds: Set<string>,
-  isHorizontal: boolean
-): Map<string, { x: number; y: number }> {
-  const childrenOf = new Map<string, string[]>()
-  const parentOf = new Map<string, string>()
-  graphEdges.forEach((e) => {
-    if (!visibleIds.has(e.from) || !visibleIds.has(e.to)) return
-    if (!childrenOf.has(e.from)) childrenOf.set(e.from, [])
-    childrenOf.get(e.from)!.push(e.to)
-    parentOf.set(e.to, e.from)
-  })
-
-  const rootIds = graphNodes
-    .filter((n) => visibleIds.has(n.id) && !parentOf.has(n.id))
-    .map((n) => n.id)
-
-  // BFS depth
-  const depth = new Map<string, number>()
-  const bfsQ: { id: string; d: number }[] = rootIds.map((id) => ({ id, d: 0 }))
-  while (bfsQ.length) {
-    const item = bfsQ.shift()!
-    depth.set(item.id, item.d)
-    ;(childrenOf.get(item.id) ?? []).forEach((c) =>
-      bfsQ.push({ id: c, d: item.d + 1 })
-    )
-  }
-
-  // Iterative post-order
-  const stack: string[] = [...rootIds]
-  const postOrder: string[] = []
-  while (stack.length) {
-    const id = stack.pop()!
-    postOrder.push(id)
-    ;(childrenOf.get(id) ?? []).forEach((c) => stack.push(c))
-  }
-  postOrder.reverse()
-
-  const prelim = new Map<string, number>()
-  const modMap = new Map<string, number>()
-  postOrder.forEach((id) => {
-    const children = (childrenOf.get(id) ?? []).filter((c) => visibleIds.has(c))
-    if (!children.length) {
-      prelim.set(id, 0)
-      modMap.set(id, 0)
-      return
-    }
-    const slot = NODE_H + V_GAP
-    children.forEach((c, i) => {
-      prelim.set(c, i * slot)
-      modMap.set(c, i * slot)
-    })
-    prelim.set(id, ((children.length - 1) * slot) / 2)
-  })
-
-  const crossAbs = new Map<string, number>()
-  let rootOffset = 0
-  rootIds.forEach((rootId) => {
-    const preQ: { id: string; inherited: number }[] = [
-      { id: rootId, inherited: rootOffset },
-    ]
-    let maxC = -Infinity
-    while (preQ.length) {
-      const { id, inherited } = preQ.shift()!
-      const p = (prelim.get(id) ?? 0) - (modMap.get(id) ?? 0) + inherited
-      crossAbs.set(id, p)
-      if (p > maxC) maxC = p
-      ;(childrenOf.get(id) ?? []).forEach((c) =>
-        preQ.push({ id: c, inherited: p + (modMap.get(c) ?? 0) })
-      )
-    }
-    rootOffset = maxC + (NODE_H + V_GAP) * 2
-  })
-
-  const MAIN_STEP = NODE_W + H_GAP
-  const positions = new Map<string, { x: number; y: number }>()
-  graphNodes.filter((n) => visibleIds.has(n.id)).forEach((n) => {
-    const d = depth.get(n.id) ?? 0
-    const cross = crossAbs.get(n.id) ?? 0
-    positions.set(
-      n.id,
-      isHorizontal ? { x: d * MAIN_STEP, y: cross } : { x: cross, y: d * MAIN_STEP }
-    )
-  })
-  return positions
-}
-
-interface CustomNodeData {
-  markdownNode: MarkdownNode
-  isSelected: boolean
-  isHighlighted: boolean
-  isCollapsed: boolean
-}
-
-function CustomNode({ data, id }: NodeProps<CustomNodeData>) {
-  const { markdownNode, isSelected, isHighlighted, isCollapsed } = data
-  const { selectNode, hoverNode, toggleNodeCollapse } = useMarkdown()
-  const nodeConfig =
-    markdownNodeTypes[markdownNode.type] ?? { label: "Node", color: "gray" }
-
-  const rawText = Array.isArray(markdownNode.text)
-    ? markdownNode.text.slice(0, 3).join("\n")
-    : markdownNode.text
-  const truncated =
-    rawText.length > 120 ? rawText.slice(0, 120) + "…" : rawText
-  const hasChildren = (markdownNode.data.childrenCount ?? 0) > 0
+  const depthSize: Record<number, string> = { 1: "text-sm font-bold", 2: "text-xs font-semibold", 3: "text-xs font-medium" }
+  const textClass = node.type === "heading" ? (depthSize[node.depth ?? 1] ?? "text-xs") : "text-xs"
 
   return (
     <div
-      className={cn(
-        "rounded-md border shadow-sm cursor-pointer select-none transition-all duration-150",
-        "hover:shadow-md hover:brightness-110",
-        nodeColorClasses[markdownNode.type] ?? "border-border bg-card",
-        isSelected &&
-          "ring-2 ring-primary ring-offset-1 ring-offset-background shadow-lg",
-        isHighlighted && "ring-2 ring-yellow-400 ring-offset-1"
-      )}
-      style={{ width: NODE_W }}
       onClick={() => selectNode(id)}
-      onMouseEnter={() => hoverNode(id)}
-      onMouseLeave={() => hoverNode(null)}
-    >
-      <Handle
-        type="target"
-        position={Position.Left}
-        className="!bg-primary/70 !w-1.5 !h-1.5 !border-0"
-      />
-
-      <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-b border-border/40">
-        <span className="text-muted-foreground shrink-0">
-          {nodeTypeIcons[markdownNode.type] ?? (
-            <Hash className="h-3.5 w-3.5" />
-          )}
-        </span>
-        <span className="text-[11px] font-medium text-muted-foreground truncate flex-1">
-          {nodeConfig.label}
-        </span>
-        {markdownNode.depth ? (
-          <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 shrink-0">
-            H{markdownNode.depth}
-          </Badge>
-        ) : null}
-        {markdownNode.data.language ? (
-          <Badge
-            variant="secondary"
-            className="text-[9px] px-1 py-0 h-4 shrink-0 max-w-[60px] truncate"
-          >
-            {markdownNode.data.language}
-          </Badge>
-        ) : null}
-        {hasChildren && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              toggleNodeCollapse(id)
-            }}
-            className="shrink-0 text-[10px] text-muted-foreground hover:text-foreground leading-none px-0.5"
-            title={isCollapsed ? "Expand" : "Collapse"}
-          >
-            {isCollapsed ? `+${markdownNode.data.childrenCount}` : "−"}
-          </button>
-        )}
-      </div>
-
-      {markdownNode.type !== "thematicBreak" && (
-        <div className="px-2.5 py-1.5">
-          {markdownNode.type === "codeBlock" ? (
-            <pre className="text-[10px] font-mono text-foreground/70 whitespace-pre-wrap overflow-hidden leading-4 max-h-16">
-              {truncated}
-            </pre>
-          ) : markdownNode.type === "image" ? (
-            <span className="text-[11px] text-foreground/70 truncate block">
-              {markdownNode.data.alt ?? "Image"}
-            </span>
-          ) : markdownNode.type === "table" &&
-            Array.isArray(markdownNode.text) ? (
-            <div className="text-[11px]">
-              <div className="font-medium text-foreground/80 truncate">
-                {Array.isArray(markdownNode.text[0])
-                  ? (markdownNode.text[0] as string[]).join(" | ")
-                  : String(markdownNode.text[0])}
-              </div>
-              {markdownNode.text.length > 1 && (
-                <div className="text-muted-foreground">
-                  {markdownNode.text.length - 1} rows
-                </div>
-              )}
-            </div>
-          ) : (
-            <p className="text-[11px] text-foreground/80 leading-4 whitespace-pre-wrap overflow-hidden max-h-12">
-              {truncated}
-            </p>
-          )}
-        </div>
+      className={cn(
+        "rounded-md border px-3 py-2 cursor-pointer select-none min-w-[80px] max-w-[280px]",
+        "transition-all duration-150",
+        data.isSelected   && "ring-2 ring-offset-1 ring-offset-background",
+        data.isHighlighted && "ring-1",
       )}
-
-      <Handle
-        type="source"
-        position={Position.Right}
-        className="!bg-primary/70 !w-1.5 !h-1.5 !border-0"
-      />
+      style={{
+        borderColor: colour,
+        background: `color-mix(in srgb, ${colour} 12%, hsl(var(--card)))`,
+        "--tw-ring-color": colour,
+      } as React.CSSProperties}
+    >
+      <div className="flex items-center gap-1.5">
+        <span
+          className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+          style={{ background: colour }}
+        />
+        <span className={cn("leading-tight text-foreground truncate", textClass)}>
+          {label}
+        </span>
+      </div>
+      {node.type === "codeBlock" && node.data?.language && (
+        <span className="mt-0.5 text-[10px] text-muted-foreground font-mono block">
+          {node.data.language}
+        </span>
+      )}
     </div>
   )
 }
 
-// Stable module-level reference — never recreated on render
-const nodeTypes = { markdown: CustomNode }
+// ─── NODE_TYPES is a stable module-level constant ────────────────────────────
+// This is the ONLY way to avoid ReactFlow error #002.
+// It MUST be defined outside any component, never inside render, never in useMemo.
+const NODE_TYPES = { markdown: MarkdownNodeComponent } as const
 
+// ─── Dagre layout helper ─────────────────────────────────────────────────────
+function applyDagreLayout(
+  nodes: Node[],
+  edges: Edge[],
+  direction: "LR" | "TB" | "RL" | "BT" = "LR",
+  nodeSpacing = 80,
+): Node[] {
+  const g = new dagre.graphlib.Graph()
+  g.setDefaultEdgeLabel(() => ({}))
+  g.setGraph({
+    rankdir: direction,
+    nodesep: nodeSpacing,
+    ranksep: nodeSpacing * 1.5,
+    marginx: 24,
+    marginy: 24,
+  })
+
+  nodes.forEach((node) => {
+    g.setNode(node.id, { width: node.width ?? 200, height: node.height ?? 50 })
+  })
+  edges.forEach((edge) => {
+    g.setEdge(edge.source, edge.target)
+  })
+
+  dagre.layout(g)
+
+  return nodes.map((node) => {
+    const pos = g.node(node.id)
+    return {
+      ...node,
+      position: {
+        x: pos.x - (node.width ?? 200) / 2,
+        y: pos.y - (node.height ?? 50) / 2,
+      },
+    }
+  })
+}
+
+// ─── Direction map ───────────────────────────────────────────────────────────
+const DIR_MAP: Record<string, "LR" | "TB" | "RL" | "BT"> = {
+  RIGHT: "LR",
+  DOWN:  "TB",
+  LEFT:  "RL",
+  UP:    "BT",
+}
+
+// ─── Inner graph component (inside ReactFlowProvider) ────────────────────────
 function GraphViewerInner() {
+  const containerRef = useRef<HTMLDivElement>(null)
+
   const {
     graph,
     selectedNodeId,
     highlightedNodes,
     collapsedNodes,
     viewSettings,
+    scale: storeScale,
   } = useMarkdown()
 
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
-  const { fitView } = useReactFlow()
 
-  const isHorizontal =
-    viewSettings.graphDirection === "RIGHT" ||
-    viewSettings.graphDirection === "LEFT"
+  const collapsedSet = useMemo(() => new Set(collapsedNodes), [collapsedNodes])
+  const highlightSet = useMemo(() => new Set(highlightedNodes), [highlightedNodes])
 
+  // Build + layout nodes/edges whenever graph or view settings change
   useEffect(() => {
     if (!graph.nodes.length) {
       setNodes([])
@@ -309,151 +163,94 @@ function GraphViewerInner() {
       return
     }
 
-    const collapsedSet = new Set(collapsedNodes)
+    const direction = DIR_MAP[viewSettings.graphDirection] ?? "LR"
+    const spacing = Math.max(viewSettings.nodeSpacing ?? 80, 60)
 
-    // Determine visible nodes
-    const parentOf = new Map<string, string>()
-    graph.edges.forEach((e) => parentOf.set(e.to, e.from))
-
-    function isVisible(id: string): boolean {
-      const parent = parentOf.get(id)
-      if (!parent) return true
-      if (collapsedSet.has(parent)) return false
-      return isVisible(parent)
-    }
-
-    const visibleIds = new Set<string>()
-    graph.nodes.forEach((n) => {
-      if (isVisible(n.id)) visibleIds.add(n.id)
+    // Build edge set for visibility — collapsed parents hide their subtree
+    const hiddenIds = new Set<string>()
+    const childMap = new Map<string, string[]>()
+    graph.edges.forEach((e) => {
+      if (!childMap.has(e.from)) childMap.set(e.from, [])
+      childMap.get(e.from)!.push(e.to)
     })
+    function markHidden(id: string) {
+      childMap.get(id)?.forEach((childId) => {
+        hiddenIds.add(childId)
+        markHidden(childId)
+      })
+    }
+    collapsedSet.forEach((id) => markHidden(id))
 
-    const positions = computeLayout(
-      graph.nodes,
-      graph.edges,
-      visibleIds,
-      isHorizontal
-    )
-
-    const flowNodes: Node[] = graph.nodes
-      .filter((n) => visibleIds.has(n.id))
+    const rfNodes: Node[] = graph.nodes
+      .filter((n) => !hiddenIds.has(n.id))
       .map((n) => ({
         id: n.id,
         type: "markdown",
-        position: positions.get(n.id) ?? { x: 0, y: 0 },
+        position: { x: 0, y: 0 },
+        width: n.width ?? 200,
+        height: n.height ?? 50,
         data: {
           markdownNode: n,
-          isSelected: selectedNodeId === n.id,
-          isHighlighted: highlightedNodes.includes(n.id),
-          isCollapsed: collapsedSet.has(n.id),
-        } as CustomNodeData,
+          isSelected: n.id === selectedNodeId,
+          isHighlighted: highlightSet.has(n.id),
+        },
       }))
 
-    const edgeType =
-      viewSettings.edgeType === "smooth"
-        ? "smoothstep"
-        : viewSettings.edgeType === "step"
-        ? "step"
-        : "default"
-
-    const flowEdges: Edge[] = graph.edges
-      .filter((e) => visibleIds.has(e.from) && visibleIds.has(e.to))
+    const rfEdges: Edge[] = graph.edges
+      .filter((e) => !hiddenIds.has(e.to) && !hiddenIds.has(e.from))
       .map((e) => ({
         id: e.id,
         source: e.from,
         target: e.to,
-        type: edgeType,
+        type: viewSettings.edgeType === "straight" ? "straight" : "smoothstep",
         animated: false,
-        style: {
-          stroke: "hsl(var(--muted-foreground))",
-          strokeWidth: 1.5,
-          opacity: 0.6,
-        },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: "hsl(var(--muted-foreground))",
-          width: 12,
-          height: 12,
-        },
+        style: { stroke: "hsl(var(--muted-foreground))", strokeWidth: 1.5, strokeOpacity: 0.5 },
+        markerEnd: { type: MarkerType.ArrowClosed, width: 12, height: 12, color: "hsl(var(--muted-foreground))" },
       }))
 
-    setNodes(flowNodes)
-    setEdges(flowEdges)
+    const laidOut = applyDagreLayout(rfNodes, rfEdges, direction, spacing)
+    setNodes(laidOut)
+    setEdges(rfEdges)
+  }, [graph, selectedNodeId, highlightSet, collapsedSet, viewSettings, setNodes, setEdges])
 
-    requestAnimationFrame(() => {
-      fitView({ padding: 0.15, duration: 300 })
-    })
-  }, [
-    graph,
-    selectedNodeId,
-    highlightedNodes,
-    collapsedNodes,
-    viewSettings,
-    isHorizontal,
-    setNodes,
-    setEdges,
-    fitView,
-  ])
+  const nodeCount = nodes.length
+  const edgeCount = edges.length
 
   return (
-    <div className="h-full w-full">
+    <div ref={containerRef} className="h-full w-full bg-[hsl(var(--background))]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
+        nodeTypes={NODE_TYPES}
         fitView
         fitViewOptions={{ padding: 0.15 }}
         minZoom={0.05}
         maxZoom={2}
         proOptions={{ hideAttribution: true }}
-        nodesDraggable
-        nodesConnectable={false}
-        elementsSelectable
+        defaultEdgeOptions={{ type: "smoothstep" }}
       >
-        <Background
-          color="hsl(var(--muted-foreground) / 0.2)"
-          gap={24}
-          size={1}
-        />
-        <Controls
-          className="!bg-card !border !border-border !shadow-md"
-          showInteractive={false}
-        />
+        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="hsl(var(--muted-foreground) / 0.15)" />
+        <Controls className="!bg-card !border-border [&>button]:!bg-card [&>button]:!border-border [&>button]:!text-foreground" />
         {viewSettings.showMinimap && (
           <MiniMap
             className="!bg-card !border !border-border"
-            nodeColor={(node) => {
-              const type = (node.data as CustomNodeData)?.markdownNode?.type
-              const palette: Record<string, string> = {
-                heading: "#22c55e",
-                codeBlock: "#a855f7",
-                link: "#3b82f6",
-                list: "#f59e0b",
-                blockquote: "#a855f7",
-                table: "#14b8a6",
-                image: "#ec4899",
-                task: "#16a34a",
-              }
-              return palette[type] ?? "#64748b"
-            }}
-            maskColor="hsl(var(--background) / 0.75)"
-            zoomable
-            pannable
+            nodeColor={(n) => NODE_COLOURS[(n.data as { markdownNode: MarkdownNode }).markdownNode?.type] ?? NODE_COLOURS.default}
+            maskColor="hsl(var(--background) / 0.7)"
           />
         )}
-        <Panel position="top-right" className="!m-2 !mt-3">
-          <div className="flex items-center gap-2 text-[11px] text-muted-foreground bg-card/90 backdrop-blur-sm px-2.5 py-1 rounded-md border border-border shadow-sm">
-            <span>{nodes.length} nodes</span>
-            <span className="opacity-40">|</span>
-            <span>{edges.length} edges</span>
-          </div>
+        <Panel position="top-right" className="flex gap-2 text-xs text-muted-foreground bg-card/80 border border-border rounded-md px-3 py-1.5 backdrop-blur-sm">
+          <span>{nodeCount} nodes</span>
+          <span className="opacity-40">|</span>
+          <span>{edgeCount} edges</span>
         </Panel>
       </ReactFlow>
     </div>
   )
 }
 
+// ─── Public export — always wraps in ReactFlowProvider ───────────────────────
 export function GraphViewer() {
   return (
     <ReactFlowProvider>

@@ -319,7 +319,7 @@ export const useMarkdown = create<MarkdownState & MarkdownActions>()(
       }
     }),
     {
-      name: "markdowntree-storage",
+      name: "markdowntree-v3",
       partialize: (state) => ({
         content: state.content,
         viewSettings: state.viewSettings,
