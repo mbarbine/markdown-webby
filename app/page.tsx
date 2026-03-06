@@ -2,6 +2,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { siteConfig } from "@/lib/platphorm/config"
+import { SiteFooter } from "@/components/site-footer"
+import { JsonLd, generateFAQSchema } from "@/components/json-ld"
 import { 
   ArrowRight, 
   Code2, 
@@ -12,12 +14,31 @@ import {
   Zap,
   Eye,
   Github,
-  ExternalLink
 } from "lucide-react"
+
+const faqs = [
+  {
+    question: "What is MarkdownTree?",
+    answer: "MarkdownTree is a visual markdown editor that transforms your documents into interactive graph visualizations, helping you understand and navigate complex document structures."
+  },
+  {
+    question: "Is MarkdownTree free to use?",
+    answer: "Yes, MarkdownTree is completely free and open source under the MIT license."
+  },
+  {
+    question: "Does MarkdownTree store my documents?",
+    answer: "No, your documents are processed locally in your browser. We do not store your content on our servers."
+  },
+  {
+    question: "What export formats are supported?",
+    answer: "MarkdownTree supports exporting to Markdown, HTML, and JSON formats."
+  },
+]
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
+      <JsonLd type="FAQPage" data={{ questions: generateFAQSchema(faqs) }} />
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center justify-between">
@@ -264,49 +285,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-muted/30">
-        <div className="container py-12">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Code2 className="h-4 w-4" />
-              </div>
-              <span className="font-semibold">{siteConfig.name}</span>
-            </div>
-            
-            <nav className="flex items-center gap-6 text-sm text-muted-foreground">
-              <Link href="/docs" className="hover:text-foreground transition-colors">
-                Documentation
-              </Link>
-              <Link href="/api/docs" className="hover:text-foreground transition-colors">
-                API
-              </Link>
-              <Link href="/privacy" className="hover:text-foreground transition-colors">
-                Privacy
-              </Link>
-              <Link href="/terms" className="hover:text-foreground transition-colors">
-                Terms
-              </Link>
-            </nav>
-
-            <div className="flex items-center gap-4">
-              <a 
-                href={siteConfig.links.github}
-                target="_blank"
-                rel="noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Github className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
-          
-          <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>Built by {siteConfig.creator}. Open source and available on GitHub.</p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

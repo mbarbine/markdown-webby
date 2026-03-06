@@ -619,6 +619,44 @@ export function parseMarkdown(markdown: string): MarkdownGraph {
   }
 }
 
+// Alias for API routes
+export const parseMarkdownToGraph = parseMarkdown
+
+export function generateOutline(markdown: string): { text: string; level: number; id: string }[] {
+  const graph = parseMarkdown(markdown)
+  return graph.nodes
+    .filter(n => n.type === "heading")
+    .map(n => ({
+      text: Array.isArray(n.text) ? n.text.join(" ") : n.text,
+      level: n.depth || 1,
+      id: n.id,
+    }))
+}
+
+export function getDocumentStats(markdown: string): {
+  characters: number
+  words: number
+  lines: number
+  headings: number
+  codeBlocks: number
+  links: number
+  images: number
+} {
+  const graph = parseMarkdown(markdown)
+  const lines = markdown.split("\n")
+  const words = markdown.split(/\s+/).filter(w => w.length > 0).length
+
+  return {
+    characters: markdown.length,
+    words,
+    lines: lines.length,
+    headings: graph.nodes.filter(n => n.type === "heading").length,
+    codeBlocks: graph.nodes.filter(n => n.type === "codeBlock").length,
+    links: graph.nodes.filter(n => n.type === "link").length,
+    images: graph.nodes.filter(n => n.type === "image").length,
+  }
+}
+
 export function graphToMarkdown(graph: MarkdownGraph): string {
   // Reconstruct markdown from graph (for export)
   const lines: string[] = []

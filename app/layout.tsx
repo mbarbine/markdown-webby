@@ -3,6 +3,8 @@ import { Inter, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { JsonLd } from "@/components/json-ld"
+import { siteConfig } from "@/lib/platphorm/config"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -32,11 +34,20 @@ export const metadata: Metadata = {
     title: "MarkdownTree - Visual Markdown Editor & Graph Viewer",
     description: "Transform markdown documents into interactive graph visualizations with AI-powered enhancements.",
     siteName: "MarkdownTree",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "MarkdownTree - Visual Markdown Editor",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "MarkdownTree - Visual Markdown Editor",
     description: "Transform markdown into interactive graph visualizations",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
@@ -64,6 +75,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <head>
+        <JsonLd type="WebApplication" />
+        <JsonLd type="Organization" />
+        <link rel="alternate" type="application/rss+xml" title={`${siteConfig.name} RSS Feed`} href="/feed.xml" />
+        <link rel="alternate" type="application/json" title={`${siteConfig.name} JSON Feed`} href="/feed.json" />
+      </head>
       <body className="font-sans antialiased bg-background text-foreground">
         <ThemeProvider
           attribute="class"

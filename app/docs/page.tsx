@@ -1,5 +1,6 @@
 import { siteConfig } from "@/lib/platphorm/config"
 import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { ExternalLink, Code2, FileJson, Sparkles, Download, FileText, Network } from "lucide-react"
@@ -11,10 +12,10 @@ export const metadata = {
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <SiteHeader />
       
-      <main className="container mx-auto px-4 py-12">
+      <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="mb-12">
             <Badge className="mb-4">v{siteConfig.version}</Badge>
@@ -177,6 +178,7 @@ export default function DocsPage() {
           </section>
         </div>
       </main>
+      <SiteFooter />
     </div>
   )
 }
