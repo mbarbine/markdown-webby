@@ -158,7 +158,9 @@ export function OutlinePanel() {
       return {
         id: node.id,
         type: node.type,
-        text: Array.isArray(node.text) ? node.text[0] : node.text,
+        text: Array.isArray(node.text)
+          ? (typeof node.text[0] === 'string' ? node.text[0] : (node.text[0] as string[]).join(' | '))
+          : node.text,
         depth: node.depth,
         children: children.filter(c => c.type === "heading" || c.children.length > 0)
       }
