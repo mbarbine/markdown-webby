@@ -13,75 +13,47 @@ interface ViewSettings {
 }
 
 interface MarkdownState {
-  // Content
   content: string
   graph: MarkdownGraph
   hasChanges: boolean
-  
-  // View state
   viewMode: "split" | "editor" | "graph" | "preview"
   fullscreen: boolean
   loading: boolean
-  
-  // Selection
   selectedNodeId: string | null
   hoveredNodeId: string | null
   highlightedNodes: string[]
-  
-  // Collapse state
   collapsedNodes: string[]
-  
-  // View settings
   viewSettings: ViewSettings
-  
-  // Zoom & pan
   scale: number
   position: { x: number; y: number }
-  
-  // Search
   searchQuery: string
   searchResults: string[]
   currentSearchIndex: number
 }
 
 interface MarkdownActions {
-  // Content actions
   setContent: (content: string) => void
   updateContent: (content: string) => void
   clearContent: () => void
-  
-  // View actions
   setViewMode: (mode: MarkdownState["viewMode"]) => void
   toggleFullscreen: () => void
   setLoading: (loading: boolean) => void
-  
-  // Selection actions
   selectNode: (nodeId: string | null) => void
   hoverNode: (nodeId: string | null) => void
   highlightNodes: (nodeIds: string[]) => void
-  
-  // Collapse actions
   toggleNodeCollapse: (nodeId: string) => void
   expandAll: () => void
   collapseAll: () => void
-  
-  // View settings actions
   updateViewSettings: (settings: Partial<ViewSettings>) => void
-  
-  // Zoom & pan actions
   setScale: (scale: number) => void
   setPosition: (position: { x: number; y: number }) => void
   zoomIn: () => void
   zoomOut: () => void
   resetView: () => void
-  
-  // Search actions
   setSearchQuery: (query: string) => void
   nextSearchResult: () => void
   prevSearchResult: () => void
   clearSearch: () => void
-  
-  // Graph actions
   refreshGraph: () => void
   getNodeById: (nodeId: string) => MarkdownNode | undefined
   getEdgesForNode: (nodeId: string) => MarkdownEdge[]
@@ -89,24 +61,20 @@ interface MarkdownActions {
   getParentNode: (nodeId: string) => MarkdownNode | undefined
 }
 
-const defaultContent = `# Headers
+// Full Markdown spec reference — used as the default editor content
+const defaultContent = `# h1 Heading
 
-# h1 Heading 8-)
 ## h2 Heading
+
 ### h3 Heading
+
 #### h4 Heading
+
 ##### h5 Heading
+
 ###### h6 Heading
 
-Alternatively, for H1 and H2, an underline-ish style:
-
-Alt-H1
-======
-
-Alt-H2
-------
-
-------
+---
 
 # Emphasis
 
@@ -118,35 +86,27 @@ Combined emphasis with **asterisks and _underscores_**.
 
 Strikethrough uses two tildes. ~~Scratch this.~~
 
-------
+---
 
 # Lists
 
 1. First ordered list item
 2. Another item
-3. Actual numbers don't matter, just that it's a number
-4. And another item.
+3. And another item
 
-* Unordered list can use asterisks
+- Unordered list can use asterisks
 - Or minuses
-+ Or pluses
+- Or pluses
 
-1. Make my changes
-    1. Fix bug
-    2. Improve formatting
-2. Push my commits to GitHub
-3. Open a pull request
-
-------
+---
 
 # Task lists
 
 - [x] Finish my changes
 - [ ] Push my commits to GitHub
 - [ ] Open a pull request
-- [x] @mentions, #refs, [links](), **formatting**, and tags supported
 
-------
+---
 
 # Links
 
@@ -154,26 +114,15 @@ Strikethrough uses two tildes. ~~Scratch this.~~
 
 [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
 
-------
-
-# Images
-
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
-
-------
+---
 
 # Code and Syntax Highlighting
 
 Inline \`code\` has \`back-ticks around\` it.
 
 \`\`\`javascript
-function $initHighlight(block, cls) {
-  try {
-    if (cls.search(/\\bno\\-highlight\\b/) != -1)
-      return process(block, true, 0x0F)
-  } catch (e) {
-    /* handle exception */
-  }
+function hello() {
+  console.log("Hello, MarkdownTree!");
 }
 \`\`\`
 
@@ -184,7 +133,7 @@ body {
 }
 \`\`\`
 
-------
+---
 
 # Tables
 
@@ -194,7 +143,7 @@ body {
 | col 2 is      | centered      |   $12 |
 | zebra stripes | are neat      |    $1 |
 
-------
+---
 
 # Blockquotes
 
@@ -203,31 +152,24 @@ body {
 
 > This is a very long line that will still be quoted properly when it wraps.
 
-------
+---
 
-# Horizontal Rules
+# Images
 
-Three or more...
+![Markdown logo](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Markdown Here")
 
 ---
 
-Hyphens
+# Horizontal Rules
+
+---
 
 ***
 
-Asterisks
-
-------
-
-# Inline HTML
-
-<dl>
-  <dt>Definition list</dt>
-  <dd>Is something people use sometimes.</dd>
-</dl>
+___
 `
 
-const initialState: MarkdownState = {
+export const initialState: MarkdownState = {
   content: defaultContent,
   graph: { nodes: [], edges: [] },
   hasChanges: false,
@@ -242,185 +184,151 @@ const initialState: MarkdownState = {
     showMinimap: true,
     showOutline: false,
     graphDirection: "RIGHT",
-    nodeSpacing: 80,
-    edgeType: "smooth"
+    nodeSpacing: 60,
+    edgeType: "smooth",
   },
   scale: 0.5,
   position: { x: 0, y: 0 },
   searchQuery: "",
   searchResults: [],
-  currentSearchIndex: 0
+  currentSearchIndex: 0,
 }
 
 export const useMarkdown = create<MarkdownState & MarkdownActions>()(
   persist(
     (set, get) => ({
       ...initialState,
-      
-      // Content actions
+
       setContent: (content) => {
         const graph = parseMarkdown(content)
         set({ content, graph, hasChanges: false, loading: false })
       },
-      
+
       updateContent: (content) => {
         const graph = parseMarkdown(content)
         set({ content, graph, hasChanges: true })
       },
-      
+
       clearContent: () => {
-        set({ 
-          content: "", 
-          graph: { nodes: [], edges: [] }, 
+        set({
+          content: "",
+          graph: { nodes: [], edges: [] },
           hasChanges: false,
           selectedNodeId: null,
           collapsedNodes: [],
           searchQuery: "",
-          searchResults: []
+          searchResults: [],
         })
       },
-      
-      // View actions
+
       setViewMode: (viewMode) => set({ viewMode }),
-      
-      toggleFullscreen: () => set((state) => ({ fullscreen: !state.fullscreen })),
-      
+      toggleFullscreen: () => set((s) => ({ fullscreen: !s.fullscreen })),
       setLoading: (loading) => set({ loading }),
-      
-      // Selection actions
       selectNode: (nodeId) => set({ selectedNodeId: nodeId }),
-      
       hoverNode: (nodeId) => set({ hoveredNodeId: nodeId }),
-      
       highlightNodes: (nodeIds) => set({ highlightedNodes: nodeIds }),
-      
-      // Collapse actions
+
       toggleNodeCollapse: (nodeId) => {
         const { collapsedNodes } = get()
-        if (collapsedNodes.includes(nodeId)) {
-          set({ collapsedNodes: collapsedNodes.filter(id => id !== nodeId) })
-        } else {
-          set({ collapsedNodes: [...collapsedNodes, nodeId] })
-        }
+        set({
+          collapsedNodes: collapsedNodes.includes(nodeId)
+            ? collapsedNodes.filter((id) => id !== nodeId)
+            : [...collapsedNodes, nodeId],
+        })
       },
-      
+
       expandAll: () => set({ collapsedNodes: [] }),
-      
+
       collapseAll: () => {
         const { graph } = get()
-        const parentNodes = graph.nodes.filter(n => n.data.isParent).map(n => n.id)
-        set({ collapsedNodes: parentNodes })
+        const parentIds = graph.nodes
+          .filter((n) => n.data?.isParent)
+          .map((n) => n.id)
+        set({ collapsedNodes: parentIds })
       },
-      
-      // View settings actions
-      updateViewSettings: (settings) => {
-        set((state) => ({
-          viewSettings: { ...state.viewSettings, ...settings }
-        }))
-      },
-      
-      // Zoom & pan actions
-      setScale: (scale) => set({ scale: Math.min(Math.max(scale, 0.1), 2) }),
-      
+
+      updateViewSettings: (settings) =>
+        set((s) => ({ viewSettings: { ...s.viewSettings, ...settings } })),
+
+      setScale: (scale) => set({ scale: Math.min(Math.max(scale, 0.05), 2) }),
       setPosition: (position) => set({ position }),
-      
-      zoomIn: () => set((state) => ({ scale: Math.min(state.scale + 0.1, 2) })),
-      
-      zoomOut: () => set((state) => ({ scale: Math.max(state.scale - 0.1, 0.1) })),
-      
+      zoomIn: () => set((s) => ({ scale: Math.min(s.scale + 0.1, 2) })),
+      zoomOut: () => set((s) => ({ scale: Math.max(s.scale - 0.1, 0.05) })),
       resetView: () => set({ scale: 0.5, position: { x: 0, y: 0 } }),
-      
-      // Search actions
+
       setSearchQuery: (query) => {
         if (!query) {
           set({ searchQuery: "", searchResults: [], currentSearchIndex: 0 })
           return
         }
-        
         const { graph } = get()
+        const q = query.toLowerCase()
         const results = graph.nodes
-          .filter(node => {
-            const text = Array.isArray(node.text) ? node.text.join(" ") : node.text
-            return text.toLowerCase().includes(query.toLowerCase())
+          .filter((n) => {
+            const t = Array.isArray(n.text) ? n.text.join(" ") : (n.text ?? "")
+            return t.toLowerCase().includes(q)
           })
-          .map(node => node.id)
-        
-        set({ 
-          searchQuery: query, 
-          searchResults: results, 
+          .map((n) => n.id)
+        set({
+          searchQuery: query,
+          searchResults: results,
           currentSearchIndex: 0,
-          highlightedNodes: results
+          highlightedNodes: results,
         })
       },
-      
+
       nextSearchResult: () => {
         const { searchResults, currentSearchIndex } = get()
-        if (searchResults.length === 0) return
-        
-        const nextIndex = (currentSearchIndex + 1) % searchResults.length
-        set({ 
-          currentSearchIndex: nextIndex,
-          selectedNodeId: searchResults[nextIndex]
-        })
+        if (!searchResults.length) return
+        const next = (currentSearchIndex + 1) % searchResults.length
+        set({ currentSearchIndex: next, selectedNodeId: searchResults[next] })
       },
-      
+
       prevSearchResult: () => {
         const { searchResults, currentSearchIndex } = get()
-        if (searchResults.length === 0) return
-        
-        const prevIndex = currentSearchIndex === 0 ? searchResults.length - 1 : currentSearchIndex - 1
-        set({ 
-          currentSearchIndex: prevIndex,
-          selectedNodeId: searchResults[prevIndex]
-        })
+        if (!searchResults.length) return
+        const prev =
+          currentSearchIndex === 0 ? searchResults.length - 1 : currentSearchIndex - 1
+        set({ currentSearchIndex: prev, selectedNodeId: searchResults[prev] })
       },
-      
-      clearSearch: () => {
-        set({ 
-          searchQuery: "", 
-          searchResults: [], 
+
+      clearSearch: () =>
+        set({
+          searchQuery: "",
+          searchResults: [],
           currentSearchIndex: 0,
-          highlightedNodes: []
-        })
-      },
-      
-      // Graph actions
+          highlightedNodes: [],
+        }),
+
       refreshGraph: () => {
         const { content } = get()
-        const graph = parseMarkdown(content)
-        set({ graph, loading: false })
+        set({ graph: parseMarkdown(content), loading: false })
       },
-      
-      getNodeById: (nodeId) => {
-        const { graph } = get()
-        return graph.nodes.find(n => n.id === nodeId)
-      },
-      
-      getEdgesForNode: (nodeId) => {
-        const { graph } = get()
-        return graph.edges.filter(e => e.from === nodeId || e.to === nodeId)
-      },
-      
+
+      getNodeById: (nodeId) => get().graph.nodes.find((n) => n.id === nodeId),
+
+      getEdgesForNode: (nodeId) =>
+        get().graph.edges.filter((e) => e.from === nodeId || e.to === nodeId),
+
       getChildNodes: (nodeId) => {
         const { graph } = get()
-        const childIds = graph.edges.filter(e => e.from === nodeId).map(e => e.to)
-        return graph.nodes.filter(n => childIds.includes(n.id))
+        const childIds = graph.edges.filter((e) => e.from === nodeId).map((e) => e.to)
+        return graph.nodes.filter((n) => childIds.includes(n.id))
       },
-      
+
       getParentNode: (nodeId) => {
         const { graph } = get()
-        const parentEdge = graph.edges.find(e => e.to === nodeId)
-        if (!parentEdge) return undefined
-        return graph.nodes.find(n => n.id === parentEdge.from)
-      }
+        const edge = graph.edges.find((e) => e.to === nodeId)
+        return edge ? graph.nodes.find((n) => n.id === edge.from) : undefined
+      },
     }),
     {
-      name: "markdowntree-v4",
+      name: "markdowntree-v3",
       partialize: (state) => ({
         content: state.content,
         viewSettings: state.viewSettings,
-        viewMode: state.viewMode
-      })
+        viewMode: state.viewMode,
+      }),
     }
   )
 )
