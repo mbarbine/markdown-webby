@@ -1,0 +1,221 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142 71% 45%;
+    --radius: 0.5rem;
+    
+    /* Custom tokens */
+    --node-heading: 142 71% 45%;
+    --node-text: 240 5.9% 10%;
+    --node-code: 262 83% 58%;
+    --node-link: 217 91% 60%;
+    --node-list: 38 92% 50%;
+    --node-quote: 280 87% 65%;
+    --node-table: 173 80% 40%;
+    --edge-default: 240 5% 64.9%;
+    --canvas-bg: 240 5% 96%;
+    --canvas-grid: 240 5% 90%;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142 71% 45%;
+    
+    /* Custom tokens dark */
+    --node-heading: 142 71% 45%;
+    --node-text: 0 0% 95%;
+    --node-code: 262 83% 68%;
+    --node-link: 217 91% 70%;
+    --node-list: 38 92% 60%;
+    --node-quote: 280 87% 75%;
+    --node-table: 173 80% 50%;
+    --edge-default: 240 5% 40%;
+    --canvas-bg: 240 10% 6%;
+    --canvas-grid: 240 5% 12%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Editor Styles */
+.markdown-editor {
+  @apply font-mono text-sm;
+}
+
+/* Graph Canvas Styles */
+.graph-canvas {
+  background-color: hsl(var(--canvas-bg));
+  background-image: 
+    radial-gradient(circle, hsl(var(--canvas-grid)) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Node Type Colors */
+.node-heading {
+  @apply bg-emerald-500/10 border-emerald-500 text-emerald-500;
+}
+
+.node-paragraph {
+  @apply bg-secondary border-border;
+}
+
+.node-code {
+  @apply bg-violet-500/10 border-violet-500 text-violet-500;
+}
+
+.node-link {
+  @apply bg-blue-500/10 border-blue-500 text-blue-500;
+}
+
+.node-list {
+  @apply bg-amber-500/10 border-amber-500 text-amber-500;
+}
+
+.node-quote {
+  @apply bg-purple-500/10 border-purple-500 text-purple-500;
+}
+
+.node-table {
+  @apply bg-teal-500/10 border-teal-500 text-teal-500;
+}
+
+.node-image {
+  @apply bg-pink-500/10 border-pink-500 text-pink-500;
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-muted rounded;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded hover:bg-muted-foreground/50;
+}
+
+/* Animation classes */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px hsl(var(--primary) / 0.1);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s ease-out;
+}
+
+/* Graph edge animations */
+.edge-animated {
+  stroke-dasharray: 5;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+/* Selection highlight */
+.node-selected {
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+}
+
+/* Search highlight */
+.search-highlight {
+  @apply bg-yellow-500/30 rounded;
+}
+
+/* Monaco editor overrides */
+.monaco-editor .margin {
+  background-color: hsl(var(--card)) !important;
+}
+
+.monaco-editor {
+  --vscode-editor-background: hsl(var(--card)) !important;
+}
+
+/* Allotment overrides */
+.split-view-view {
+  @apply bg-background;
+}
+
+[data-testid="split-view-separator"] {
+  @apply bg-border hover:bg-primary/50 transition-colors;
+}
