@@ -16,7 +16,7 @@ import {
   List,
   Quote,
   Table,
-  Image,
+  Image as ImageIcon,
   Link,
 } from "lucide-react"
 
@@ -35,7 +35,7 @@ const typeIcons: Record<string, React.ReactNode> = {
   list: <List className="h-3.5 w-3.5" />,
   blockquote: <Quote className="h-3.5 w-3.5" />,
   table: <Table className="h-3.5 w-3.5" />,
-  image: <Image className="h-3.5 w-3.5" />,
+  image: <ImageIcon className="h-3.5 w-3.5" />,
   link: <Link className="h-3.5 w-3.5" />,
 }
 

@@ -44,10 +44,8 @@ export default function EditorPage() {
     const sharedContent = parseShareUrl()
     if (sharedContent) {
       setContent(sharedContent)
-    } else {
-      setContent(content)
     }
-  }, [])
+  }, [setContent])
 
   const handleInsertFromAI = useCallback((text: string) => {
     setContent(content + "\n\n" + text)
