@@ -39,3 +39,7 @@ next-env.d.ts
 
 # Development
 commit.md
+
+# Alternative package managers
+pnpm-lock.yaml
+yarn.lock

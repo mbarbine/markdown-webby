@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Inter, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { I18nProvider } from "@/lib/i18n"
 import { Toaster } from "@/components/ui/toaster"
 import { siteConfig } from "@/lib/platphorm/config"
 
@@ -34,6 +35,10 @@ export const metadata: Metadata = {
     "document structure",
     "interactive",
     "open source",
+    "i18n",
+    "share cards",
+    "Monaco editor",
+    "ReactFlow",
   ],
   authors: [{ name: "Platphorm News", url: "https://platphormnews.com" }],
   creator: "Platphorm News",
@@ -106,8 +111,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
+          <I18nProvider>
+            {children}
+            <Toaster />
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

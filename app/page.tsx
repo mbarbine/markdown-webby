@@ -59,6 +59,7 @@ const faqs = [
 const features = [
   {
     icon: Network,
+    emoji: "📊",
     color: "text-emerald-500",
     bg: "bg-emerald-500/10",
     title: "Graph Visualization",
@@ -67,6 +68,7 @@ const features = [
   },
   {
     icon: Code2,
+    emoji: "✏️",
     color: "text-violet-500",
     bg: "bg-violet-500/10",
     title: "Monaco Editor",
@@ -75,6 +77,7 @@ const features = [
   },
   {
     icon: Sparkles,
+    emoji: "🤖",
     color: "text-amber-500",
     bg: "bg-amber-500/10",
     title: "AI Enhancements",
@@ -83,6 +86,7 @@ const features = [
   },
   {
     icon: Eye,
+    emoji: "🔄",
     color: "text-blue-500",
     bg: "bg-blue-500/10",
     title: "Four View Modes",
@@ -91,27 +95,29 @@ const features = [
   },
   {
     icon: Download,
+    emoji: "📤",
     color: "text-teal-500",
     bg: "bg-teal-500/10",
-    title: "Export Anywhere",
+    title: "Export & Share",
     description:
       "Export to Markdown, clean HTML, or structured JSON. Share a URL that encodes your document so collaborators open it instantly, no signup needed.",
   },
   {
     icon: Zap,
+    emoji: "🔌",
     color: "text-pink-500",
     bg: "bg-pink-500/10",
     title: "MCP-Ready API",
     description:
-      "Every feature is available via a versioned REST API with OpenAPI docs. Webhook delivery, structured events, and n8n-compatible payloads built in.",
+      "Every feature is available via a versioned REST API with OpenAPI docs. MCP-compatible for AI agent workflows at mcp.platphormnews.com.",
   },
 ]
 
 const stats = [
-  { value: "100%", label: "Browser-native, no backend required" },
-  { value: "4 views", label: "Editor · Split · Graph · Preview" },
-  { value: "MIT", label: "Open source licence" },
-  { value: "v1 API", label: "OpenAPI documented, MCP-compatible" },
+  { value: "100%", label: "🌐 Browser-native, no backend required" },
+  { value: "4 views", label: "✏️ Editor · 🔀 Split · 📊 Graph · 👁️ Preview" },
+  { value: "MIT", label: "📜 Open source licence" },
+  { value: "v1 API", label: "🔌 OpenAPI documented, MCP-compatible" },
 ]
 
 export default function HomePage() {
@@ -177,7 +183,7 @@ export default function HomePage() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground mb-8 animate-fade-up backdrop-blur-sm">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              AI-powered · Open source · MCP-ready
+              🤖 AI-powered · 📜 Open source · 🔌 MCP-ready
             </div>
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance leading-[1.04] animate-fade-up-1">
@@ -372,8 +378,11 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((f) => (
               <div key={f.title} className="bento-card group hover:border-primary/40 transition-colors">
-                <div className={`h-10 w-10 rounded-lg ${f.bg} flex items-center justify-center`}>
-                  <f.icon className={`h-5 w-5 ${f.color}`} />
+                <div className="flex items-center gap-3">
+                  <div className={`h-10 w-10 rounded-lg ${f.bg} flex items-center justify-center`}>
+                    <f.icon className={`h-5 w-5 ${f.color}`} />
+                  </div>
+                  <span className="text-2xl" role="img" aria-hidden="true">{f.emoji}</span>
                 </div>
                 <h3 className="text-lg font-semibold">{f.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
@@ -394,14 +403,15 @@ export default function HomePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: "01", icon: FileText, title: "Paste or write", body: "Open the editor and paste your existing markdown, import a .md file, or start typing from scratch." },
-              { step: "02", icon: Network, title: "Explore the graph", body: "Your document instantly becomes a zoomable, collapsible graph. Click any node to jump to it in the editor." },
-              { step: "03", icon: Share2, title: "Export or share", body: "Export to Markdown, HTML or JSON. Copy a shareable URL to send your document — no account required." },
+              { step: "01", icon: FileText, emoji: "📝", title: "Paste or write", body: "Open the editor and paste your existing markdown, import a .md file, or start typing from scratch." },
+              { step: "02", icon: Network, emoji: "🔍", title: "Explore the graph", body: "Your document instantly becomes a zoomable, collapsible graph. Click any node to jump to it in the editor." },
+              { step: "03", icon: Share2, emoji: "🚀", title: "Export or share", body: "Export to Markdown, HTML or JSON. Copy a shareable URL to send your document — no account required." },
             ].map((item) => (
               <div key={item.step} className="flex flex-col gap-4">
                 <div className="flex items-center gap-3">
                   <span className="text-4xl font-bold text-primary/20 font-mono leading-none">{item.step}</span>
                   <item.icon className="h-6 w-6 text-primary" />
+                  <span className="text-2xl" role="img" aria-hidden="true">{item.emoji}</span>
                 </div>
                 <h3 className="text-xl font-semibold">{item.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{item.body}</p>
