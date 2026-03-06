@@ -3,85 +3,99 @@ import { Inter, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
-import { JsonLd } from "@/components/json-ld"
 import { siteConfig } from "@/lib/platphorm/config"
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter"
+  variable: "--font-inter",
+  display: "swap",
 })
 
-const jetbrainsMono = JetBrains_Mono({ 
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-mono"
+  variable: "--font-mono",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
   title: {
-    default: "MarkdownTree - Visual Markdown Editor & Graph Viewer",
-    template: "%s | MarkdownTree"
+    default: "MarkdownTree — Visual Markdown Editor & Graph Viewer",
+    template: "%s | MarkdownTree",
   },
-  description: "Transform markdown documents into interactive graph visualizations. Edit, explore, and export markdown with AI-powered enhancements.",
-  keywords: ["markdown", "visualization", "graph", "editor", "AI", "documentation", "MCP"],
-  authors: [{ name: "Platphorm News" }],
+  description:
+    "Transform any markdown document into an interactive graph visualization. Edit, explore, navigate and export with AI-powered enhancements.",
+  keywords: [
+    "markdown",
+    "visualization",
+    "graph",
+    "editor",
+    "AI",
+    "MCP",
+    "document structure",
+    "interactive",
+    "open source",
+  ],
+  authors: [{ name: "Platphorm News", url: "https://platphormnews.com" }],
   creator: "Platphorm News",
   publisher: "Platphorm News",
   metadataBase: new URL("https://markdown.platphormnews.com"),
+  alternates: {
+    canonical: "/",
+    types: {
+      "application/rss+xml": "/feed.xml",
+      "application/json": "/feed.json",
+    },
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://markdown.platphormnews.com",
-    title: "MarkdownTree - Visual Markdown Editor & Graph Viewer",
-    description: "Transform markdown documents into interactive graph visualizations with AI-powered enhancements.",
+    title: "MarkdownTree — Visual Markdown Editor & Graph Viewer",
+    description:
+      "Transform markdown documents into interactive graph visualizations with AI-powered enhancements.",
     siteName: "MarkdownTree",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "MarkdownTree - Visual Markdown Editor",
+        alt: "MarkdownTree — Visual Markdown Editor",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MarkdownTree - Visual Markdown Editor",
+    title: "MarkdownTree — Visual Markdown Editor",
     description: "Transform markdown into interactive graph visualizations",
     images: ["/og-image.jpg"],
+    creator: "@platphormnews",
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-    },
+    googleBot: { index: true, follow: true },
   },
+  manifest: "/manifest.webmanifest",
 }
 
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090b" }
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
   ],
   width: "device-width",
   initialScale: 1,
+  userScalable: true,
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <head>
-        <JsonLd type="WebApplication" />
-        <JsonLd type="Organization" />
-        <link rel="alternate" type="application/rss+xml" title={`${siteConfig.name} RSS Feed`} href="/feed.xml" />
-        <link rel="alternate" type="application/json" title={`${siteConfig.name} JSON Feed`} href="/feed.json" />
-      </head>
-      <body className="font-sans antialiased bg-background text-foreground">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
+    >
+      <body className="font-sans antialiased bg-background text-foreground min-h-screen">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

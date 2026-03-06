@@ -1,283 +1,510 @@
 import Link from "next/link"
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { siteConfig } from "@/lib/platphorm/config"
 import { SiteFooter } from "@/components/site-footer"
 import { JsonLd, generateFAQSchema } from "@/components/json-ld"
-import { 
-  ArrowRight, 
-  Code2, 
-  Network, 
-  Sparkles, 
-  Download, 
+import { siteConfig } from "@/lib/platphorm/config"
+import {
+  ArrowRight,
+  Code2,
+  Network,
+  Sparkles,
+  Download,
   FileText,
   Zap,
   Eye,
   Github,
+  Layers,
+  Share2,
+  Terminal,
 } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "MarkdownTree — Visual Markdown Editor & Graph Viewer",
+  description:
+    "Transform any markdown document into an interactive graph visualization. Edit, explore, navigate and export with AI-powered enhancements. Free and open source.",
+  alternates: { canonical: "/" },
+}
 
 const faqs = [
   {
     question: "What is MarkdownTree?",
-    answer: "MarkdownTree is a visual markdown editor that transforms your documents into interactive graph visualizations, helping you understand and navigate complex document structures."
+    answer:
+      "MarkdownTree is a visual markdown editor that transforms your documents into interactive graph visualizations, so you can see, navigate and understand document structure at a glance.",
   },
   {
-    question: "Is MarkdownTree free to use?",
-    answer: "Yes, MarkdownTree is completely free and open source under the MIT license."
+    question: "Is MarkdownTree free?",
+    answer:
+      "Yes, MarkdownTree is completely free and open source under the MIT license.",
   },
   {
     question: "Does MarkdownTree store my documents?",
-    answer: "No, your documents are processed locally in your browser. We do not store your content on our servers."
+    answer:
+      "No. Documents are processed entirely in your browser. Nothing is sent to or stored on our servers.",
   },
   {
-    question: "What export formats are supported?",
-    answer: "MarkdownTree supports exporting to Markdown, HTML, and JSON formats."
+    question: "What export formats does MarkdownTree support?",
+    answer:
+      "MarkdownTree supports export to Markdown, HTML, and JSON. PNG graph export is coming soon.",
+  },
+  {
+    question: "Does MarkdownTree have an API?",
+    answer:
+      "Yes. MarkdownTree exposes a versioned REST API at /api/v1 with OpenAPI documentation at /api/docs. It is MCP-compatible for AI agent workflows.",
   },
 ]
 
+const features = [
+  {
+    icon: Network,
+    color: "text-emerald-500",
+    bg: "bg-emerald-500/10",
+    title: "Graph Visualization",
+    description:
+      "See every heading, paragraph, code block, and link as a navigable node in an interactive graph. Collapse subtrees, zoom, pan, and click to jump to source.",
+  },
+  {
+    icon: Code2,
+    color: "text-violet-500",
+    bg: "bg-violet-500/10",
+    title: "Monaco Editor",
+    description:
+      "Full-featured markdown editor powered by Monaco — the same engine as VS Code. Syntax highlighting, auto-pairs, and live graph updates as you type.",
+  },
+  {
+    icon: Sparkles,
+    color: "text-amber-500",
+    bg: "bg-amber-500/10",
+    title: "AI Enhancements",
+    description:
+      "Open the AI panel to improve writing, generate a table of contents, summarize sections, or ask questions about your document in natural language.",
+  },
+  {
+    icon: Eye,
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
+    title: "Four View Modes",
+    description:
+      "Switch between Editor, Graph, Split, and Preview. Resize panels freely. Toggle the document outline sidebar and minimap to fit your workflow.",
+  },
+  {
+    icon: Download,
+    color: "text-teal-500",
+    bg: "bg-teal-500/10",
+    title: "Export Anywhere",
+    description:
+      "Export to Markdown, clean HTML, or structured JSON. Share a URL that encodes your document so collaborators open it instantly, no signup needed.",
+  },
+  {
+    icon: Zap,
+    color: "text-pink-500",
+    bg: "bg-pink-500/10",
+    title: "MCP-Ready API",
+    description:
+      "Every feature is available via a versioned REST API with OpenAPI docs. Webhook delivery, structured events, and n8n-compatible payloads built in.",
+  },
+]
+
+const stats = [
+  { value: "100%", label: "Browser-native, no backend required" },
+  { value: "4 views", label: "Editor · Split · Graph · Preview" },
+  { value: "MIT", label: "Open source licence" },
+  { value: "v1 API", label: "OpenAPI documented, MCP-compatible" },
+]
+
 export default function HomePage() {
+  const faqSchema = generateFAQSchema(faqs)
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <JsonLd type="FAQPage" data={{ questions: generateFAQSchema(faqs) }} />
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+    <div className="flex flex-col min-h-screen bg-background">
+      <JsonLd type="WebApplication" />
+      <JsonLd type="Organization" />
+      <JsonLd type="FAQPage" data={{ questions: faqSchema }} />
+
+      {/* ── NAV ───────────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+        <div className="container flex h-14 items-center gap-6">
+          <Link href="/" className="flex items-center gap-2.5 font-semibold shrink-0">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <Code2 className="h-4 w-4" />
-            </div>
-            <span>{siteConfig.name}</span>
+            </span>
+            <span className="hidden sm:block">{siteConfig.name}</span>
           </Link>
-          
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Docs
-            </Link>
-            <Link href="/api/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              API
-            </Link>
-            <a 
-              href={siteConfig.links.github} 
-              target="_blank" 
-              rel="noreferrer"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              GitHub
-            </a>
+
+          <nav className="hidden md:flex items-center gap-5 text-sm text-muted-foreground">
+            <Link href="/editor" className="hover:text-foreground transition-colors">Editor</Link>
+            <Link href="/docs" className="hover:text-foreground transition-colors">Docs</Link>
+            <Link href="/api/docs" className="hover:text-foreground transition-colors">API</Link>
           </nav>
 
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild>
+          <div className="ml-auto flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="gap-1.5 hidden sm:flex" asChild>
               <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
-                <Github className="h-4 w-4 mr-2" />
-                Star
+                <Github className="h-4 w-4" />
+                GitHub
               </a>
             </Button>
-            <Button size="sm" asChild>
+            <Button size="sm" className="gap-1.5" asChild>
               <Link href="/editor">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4" />
+                Open Editor
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="container relative py-24 md:py-32 lg:py-40">
-          <div className="flex flex-col items-center text-center gap-8 max-w-4xl mx-auto">
-            <Badge variant="secondary" className="px-4 py-1">
-              <Sparkles className="h-3 w-3 mr-2" />
-              AI-Powered Markdown Visualization
+      {/* ── HERO ──────────────────────────────────────────────────────── */}
+      <section className="relative border-b border-border/50">
+        {/* subtle grid bg */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(hsl(var(--border)/0.4) 1px,transparent 1px),linear-gradient(90deg,hsl(var(--border)/0.4) 1px,transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
+        />
+        <div className="relative container py-24 md:py-36">
+          <div className="max-w-3xl">
+            <Badge variant="secondary" className="mb-6 gap-1.5 animate-fade-up">
+              <Sparkles className="h-3 w-3 text-primary" />
+              AI-powered · Open source · MCP-ready
             </Badge>
-            
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-balance">
-              Transform Markdown into
-              <span className="text-primary"> Interactive Graphs</span>
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance leading-[1.05] animate-fade-up-1">
+              Markdown as a{" "}
+              <span className="text-primary">living graph.</span>
             </h1>
-            
-            <p className="text-lg text-muted-foreground max-w-2xl text-pretty">
-              Visualize, edit, and explore your markdown documents like never before. 
-              See the structure of your content as an interactive graph, with AI-powered 
-              enhancements and seamless export capabilities.
+
+            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl text-pretty leading-relaxed animate-fade-up-2">
+              MarkdownTree transforms any markdown document into an interactive node graph —
+              so structure, hierarchy and relationships are immediately visible. Edit,
+              explore, enhance with AI, and export in seconds.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Button size="lg" asChild>
+            <div className="mt-10 flex flex-wrap gap-3 animate-fade-up-3">
+              <Button size="lg" className="gap-2" asChild>
                 <Link href="/editor">
-                  Open Editor
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  Open Editor <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button size="lg" variant="outline" className="gap-2" asChild>
                 <Link href="/docs">
-                  <FileText className="mr-2 h-4 w-4" />
+                  <FileText className="h-4 w-4" />
                   Documentation
                 </Link>
               </Button>
+              <Button size="lg" variant="ghost" className="gap-2" asChild>
+                <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
+                  <Github className="h-4 w-4" />
+                  Star on GitHub
+                </a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── LIVE DEMO PREVIEW ─────────────────────────────────────────── */}
+      <section className="border-b border-border/50 bg-muted/20">
+        <div className="container py-16">
+          {/* Browser chrome */}
+          <div className="rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/60 shrink-0">
+              <div className="flex gap-1.5">
+                <div className="h-3 w-3 rounded-full bg-red-500/80" />
+                <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
+                <div className="h-3 w-3 rounded-full bg-emerald-500/80" />
+              </div>
+              <span className="ml-3 text-xs font-mono text-muted-foreground">
+                markdown.platphormnews.com/editor
+              </span>
+              <div className="ml-auto flex items-center gap-2">
+                <div className="flex rounded-md border border-border bg-background text-xs overflow-hidden">
+                  <span className="px-2 py-1 bg-secondary text-secondary-foreground font-medium">Split</span>
+                  <span className="px-2 py-1 text-muted-foreground">Graph</span>
+                  <span className="px-2 py-1 text-muted-foreground">Preview</span>
+                </div>
+              </div>
             </div>
 
-            {/* Preview */}
-            <div className="w-full mt-8 rounded-xl border border-border bg-card shadow-2xl overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/50">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
+            {/* Split view mock */}
+            <div className="grid grid-cols-5 divide-x divide-border" style={{ minHeight: 360 }}>
+              {/* Editor pane */}
+              <div className="col-span-2 p-5 font-mono text-xs leading-6 text-foreground/80 bg-card overflow-hidden">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-emerald-500 font-bold text-sm">#</span>
+                  <span className="text-foreground font-semibold">Project Architecture</span>
                 </div>
-                <span className="text-xs text-muted-foreground ml-2">{siteConfig.url}</span>
+                <div className="space-y-1 text-muted-foreground">
+                  <div><span className="text-violet-500">##</span> Overview</div>
+                  <div className="pl-4">System designed for global scale...</div>
+                  <div className="mt-2"><span className="text-violet-500">##</span> Components</div>
+                  <div className="pl-4"><span className="text-amber-500">-</span> Frontend layer</div>
+                  <div className="pl-4"><span className="text-amber-500">-</span> API gateway</div>
+                  <div className="pl-4"><span className="text-amber-500">-</span> Data pipeline</div>
+                  <div className="mt-2"><span className="text-violet-500">###</span> API</div>
+                  <div className="pl-4 text-xs font-mono bg-muted/60 rounded px-2 py-1 mt-1">
+                    <span className="text-blue-400">GET</span>{" "}
+                    <span className="text-emerald-400">/api/v1/transform</span>
+                  </div>
+                  <div className="mt-2"><span className="text-blue-400">[</span>Read docs<span className="text-blue-400">]</span>(https://...)</div>
+                </div>
               </div>
-              <div className="aspect-video bg-gradient-to-br from-muted via-card to-muted flex items-center justify-center">
-                <div className="grid grid-cols-3 gap-4 p-8 w-full max-w-3xl">
-                  {/* Editor Mock */}
-                  <div className="col-span-1 bg-background rounded-lg border border-border p-4 space-y-2">
-                    <div className="h-2 w-12 bg-primary/60 rounded" />
-                    <div className="h-2 w-full bg-muted rounded" />
-                    <div className="h-2 w-3/4 bg-muted rounded" />
-                    <div className="h-2 w-16 bg-violet-500/60 rounded mt-4" />
-                    <div className="h-2 w-full bg-muted rounded" />
-                    <div className="h-2 w-2/3 bg-muted rounded" />
-                    <div className="h-2 w-14 bg-amber-500/60 rounded mt-4" />
-                    <div className="h-2 w-full bg-muted rounded" />
-                  </div>
-                  {/* Graph Mock */}
-                  <div className="col-span-2 bg-background rounded-lg border border-border p-4 relative">
-                    <svg className="w-full h-full" viewBox="0 0 200 120">
-                      {/* Nodes */}
-                      <rect x="10" y="45" width="40" height="30" rx="4" className="fill-emerald-500/20 stroke-emerald-500" strokeWidth="2" />
-                      <rect x="70" y="20" width="40" height="25" rx="4" className="fill-violet-500/20 stroke-violet-500" strokeWidth="2" />
-                      <rect x="70" y="55" width="40" height="25" rx="4" className="fill-amber-500/20 stroke-amber-500" strokeWidth="2" />
-                      <rect x="70" y="90" width="40" height="25" rx="4" className="fill-blue-500/20 stroke-blue-500" strokeWidth="2" />
-                      <rect x="130" y="35" width="40" height="20" rx="4" className="fill-muted stroke-muted-foreground" strokeWidth="1" />
-                      <rect x="130" y="60" width="40" height="20" rx="4" className="fill-muted stroke-muted-foreground" strokeWidth="1" />
-                      <rect x="130" y="85" width="40" height="20" rx="4" className="fill-muted stroke-muted-foreground" strokeWidth="1" />
-                      {/* Edges */}
-                      <line x1="50" y1="55" x2="70" y2="32" className="stroke-muted-foreground" strokeWidth="2" />
-                      <line x1="50" y1="60" x2="70" y2="67" className="stroke-muted-foreground" strokeWidth="2" />
-                      <line x1="50" y1="65" x2="70" y2="102" className="stroke-muted-foreground" strokeWidth="2" />
-                      <line x1="110" y1="32" x2="130" y2="45" className="stroke-muted-foreground" strokeWidth="1" />
-                      <line x1="110" y1="67" x2="130" y2="70" className="stroke-muted-foreground" strokeWidth="1" />
-                      <line x1="110" y1="102" x2="130" y2="95" className="stroke-muted-foreground" strokeWidth="1" />
-                    </svg>
-                  </div>
-                </div>
+
+              {/* Graph pane */}
+              <div
+                className="col-span-3 relative overflow-hidden"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(circle,hsl(var(--border)) 1px,transparent 1px)",
+                  backgroundSize: "24px 24px",
+                  backgroundColor: "hsl(var(--canvas-bg))",
+                }}
+              >
+                <svg className="w-full h-full" viewBox="0 0 540 360" preserveAspectRatio="xMidYMid meet">
+                  {/* Edges */}
+                  <line x1="80" y1="60" x2="200" y2="120" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
+                  <line x1="80" y1="60" x2="200" y2="210" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
+                  <line x1="200" y1="120" x2="340" y2="80" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
+                  <line x1="200" y1="120" x2="340" y2="140" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
+                  <line x1="200" y1="120" x2="340" y2="200" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
+                  <line x1="200" y1="210" x2="340" y2="280" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
+                  <line x1="340" y1="80" x2="460" y2="60" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeOpacity="0.4" />
+                  <line x1="340" y1="80" x2="460" y2="110" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeOpacity="0.4" />
+
+                  {/* Root node */}
+                  <g>
+                    <rect x="8" y="36" width="140" height="46" rx="8" fill="#22c55e22" stroke="#22c55e" strokeWidth="2" />
+                    <text x="78" y="55" textAnchor="middle" fill="#22c55e" fontSize="9" fontWeight="600">H1</text>
+                    <text x="78" y="70" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="10" fontWeight="500">Project Architecture</text>
+                  </g>
+
+                  {/* H2 nodes */}
+                  <g>
+                    <rect x="150" y="96" width="110" height="44" rx="7" fill="#a855f722" stroke="#a855f7" strokeWidth="1.5" />
+                    <text x="205" y="113" textAnchor="middle" fill="#a855f7" fontSize="9" fontWeight="600">H2</text>
+                    <text x="205" y="128" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="10">Overview</text>
+                  </g>
+                  <g>
+                    <rect x="150" y="186" width="110" height="44" rx="7" fill="#a855f722" stroke="#a855f7" strokeWidth="1.5" />
+                    <text x="205" y="203" textAnchor="middle" fill="#a855f7" fontSize="9" fontWeight="600">H2</text>
+                    <text x="205" y="218" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="10">Components</text>
+                  </g>
+
+                  {/* H3 nodes */}
+                  <g>
+                    <rect x="290" y="58" width="100" height="40" rx="6" fill="#3b82f622" stroke="#3b82f6" strokeWidth="1.5" />
+                    <text x="340" y="74" textAnchor="middle" fill="#3b82f6" fontSize="9" fontWeight="600">H3</text>
+                    <text x="340" y="87" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="10">API</text>
+                  </g>
+                  <g>
+                    <rect x="290" y="118" width="100" height="40" rx="6" fill="#f59e0b22" stroke="#f59e0b" strokeWidth="1.5" />
+                    <text x="340" y="134" textAnchor="middle" fill="#f59e0b" fontSize="9" fontWeight="600">List</text>
+                    <text x="340" y="147" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="10">Frontend layer</text>
+                  </g>
+                  <g>
+                    <rect x="290" y="178" width="100" height="40" rx="6" fill="#f59e0b22" stroke="#f59e0b" strokeWidth="1.5" />
+                    <text x="340" y="194" textAnchor="middle" fill="#f59e0b" fontSize="9" fontWeight="600">List</text>
+                    <text x="340" y="207" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="10">API gateway</text>
+                  </g>
+                  <g>
+                    <rect x="290" y="258" width="100" height="40" rx="6" fill="#a855f722" stroke="#a855f7" strokeWidth="1.5" />
+                    <text x="340" y="274" textAnchor="middle" fill="#a855f7" fontSize="9" fontWeight="600">Code</text>
+                    <text x="340" y="287" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="10">GET /api/v1/…</text>
+                  </g>
+
+                  {/* Leaf nodes */}
+                  <g>
+                    <rect x="400" y="42" width="90" height="34" rx="5" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" />
+                    <text x="445" y="62" textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize="9">Read docs</text>
+                  </g>
+                  <g>
+                    <rect x="400" y="86" width="90" height="34" rx="5" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" />
+                    <text x="445" y="106" textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize="9">Link ↗</text>
+                  </g>
+
+                  {/* Node count badge */}
+                  <rect x="390" y="310" width="90" height="22" rx="6" fill="hsl(var(--card))" stroke="hsl(var(--border))" strokeWidth="1" />
+                  <text x="435" y="325" textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize="8">9 nodes · 8 edges</text>
+                </svg>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="border-t border-border bg-muted/30">
+      {/* ── STATS ─────────────────────────────────────────────────────── */}
+      <section className="border-b border-border/50">
+        <div className="container py-12">
+          <dl className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border">
+            {stats.map((s) => (
+              <div key={s.label} className="flex flex-col gap-1 bg-background px-6 py-8">
+                <dt className="text-3xl font-bold text-primary">{s.value}</dt>
+                <dd className="text-sm text-muted-foreground">{s.label}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      {/* ── FEATURES ──────────────────────────────────────────────────── */}
+      <section className="border-b border-border/50 bg-muted/10">
         <div className="container py-24">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
-              Powerful Features
+          <div className="mb-16 max-w-xl">
+            <Badge variant="outline" className="mb-4">Features</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-balance">
+              Everything you need to master your markdown
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to work with markdown documents, all in one place.
+            <p className="mt-4 text-muted-foreground text-pretty leading-relaxed">
+              From a powerful Monaco editor to an AI assistant to a fully documented API —
+              MarkdownTree is the tool you didn't know you were missing.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                <Network className="h-6 w-6 text-primary" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f) => (
+              <div key={f.title} className="bento-card group hover:border-primary/40 transition-colors">
+                <div className={`h-10 w-10 rounded-lg ${f.bg} flex items-center justify-center`}>
+                  <f.icon className={`h-5 w-5 ${f.color}`} />
+                </div>
+                <h3 className="text-lg font-semibold">{f.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Graph Visualization</h3>
-              <p className="text-muted-foreground">
-                See your document structure as an interactive, zoomable graph. 
-                Navigate complex documents with ease.
-              </p>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Feature 2 */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-              <div className="h-12 w-12 rounded-lg bg-violet-500/10 flex items-center justify-center mb-4">
-                <Code2 className="h-6 w-6 text-violet-500" />
+      {/* ── HOW IT WORKS ──────────────────────────────────────────────── */}
+      <section className="border-b border-border/50">
+        <div className="container py-24">
+          <div className="mb-16 max-w-xl">
+            <Badge variant="outline" className="mb-4">How it works</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-balance">
+              Paste. Explore. Export.
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { step: "01", icon: FileText, title: "Paste or write", body: "Open the editor and paste your existing markdown, import a .md file, or start typing from scratch." },
+              { step: "02", icon: Network, title: "Explore the graph", body: "Your document instantly becomes a zoomable, collapsible graph. Click any node to jump to it in the editor." },
+              { step: "03", icon: Share2, title: "Export or share", body: "Export to Markdown, HTML or JSON. Copy a shareable URL to send your document — no account required." },
+            ].map((item) => (
+              <div key={item.step} className="flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl font-bold text-primary/20 font-mono leading-none">{item.step}</span>
+                  <item.icon className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold">{item.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{item.body}</p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Live Editor</h3>
-              <p className="text-muted-foreground">
-                Edit markdown with syntax highlighting, auto-completion, 
-                and see changes reflected instantly in the graph.
-              </p>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Feature 3 */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-              <div className="h-12 w-12 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
-                <Sparkles className="h-6 w-6 text-amber-500" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">AI Enhancements</h3>
-              <p className="text-muted-foreground">
-                Leverage AI to summarize content, suggest improvements, 
-                and enhance your documentation automatically.
+      {/* ── API CALLOUT ───────────────────────────────────────────────── */}
+      <section className="border-b border-border/50 bg-muted/10">
+        <div className="container py-24">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <Badge variant="outline" className="mb-4">For developers</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-balance mb-4">
+                A fully documented REST API
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Every feature is accessible via{" "}
+                <code className="text-primary font-mono text-sm">/api/v1</code>. Transform
+                markdown to graph JSON, stream AI enhancements, and receive structured
+                webhooks. OpenAPI spec live at{" "}
+                <code className="text-primary font-mono text-sm">/api/docs</code>.
               </p>
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" className="gap-2" asChild>
+                  <Link href="/api/docs">
+                    <Terminal className="h-4 w-4" />
+                    API Reference
+                  </Link>
+                </Button>
+                <Button variant="ghost" className="gap-2" asChild>
+                  <Link href="/llms.txt">
+                    <Layers className="h-4 w-4" />
+                    LLM Discovery
+                  </Link>
+                </Button>
+              </div>
             </div>
-
-            {/* Feature 4 */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-              <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">
-                <Eye className="h-6 w-6 text-blue-500" />
+            <div className="rounded-xl border border-border bg-card overflow-hidden font-mono text-sm">
+              <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-muted/40">
+                <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="text-xs text-muted-foreground">POST /api/v1/transform</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Multiple Views</h3>
-              <p className="text-muted-foreground">
-                Switch between editor, graph, split, and preview modes 
-                to work the way you prefer.
-              </p>
-            </div>
+              <pre className="p-4 text-xs leading-6 overflow-x-auto text-foreground/80">
+{`{
+  "content": "# Hello\\n\\n## World",
+  "options": {
+    "includeText": true,
+    "direction": "RIGHT"
+  }
+}
 
-            {/* Feature 5 */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-              <div className="h-12 w-12 rounded-lg bg-teal-500/10 flex items-center justify-center mb-4">
-                <Download className="h-6 w-6 text-teal-500" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Export Anywhere</h3>
-              <p className="text-muted-foreground">
-                Export your documents as Markdown, HTML, JSON, or PNG. 
-                Share your work in any format.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-              <div className="h-12 w-12 rounded-lg bg-pink-500/10 flex items-center justify-center mb-4">
-                <Zap className="h-6 w-6 text-pink-500" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">MCP Ready</h3>
-              <p className="text-muted-foreground">
-                Built with Model Context Protocol support for seamless 
-                integration with AI tools and workflows.
-              </p>
+// → 200 OK
+{
+  "nodes": [
+    { "id": "n0", "type": "heading",
+      "depth": 1, "text": "Hello" },
+    { "id": "n1", "type": "heading",
+      "depth": 2, "text": "World" }
+  ],
+  "edges": [
+    { "from": "n0", "to": "n1" }
+  ]
+}`}
+              </pre>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="border-t border-border">
+      {/* ── FAQ ───────────────────────────────────────────────────────── */}
+      <section className="border-b border-border/50">
+        <div className="container py-24 max-w-3xl">
+          <Badge variant="outline" className="mb-6">FAQ</Badge>
+          <h2 className="text-3xl font-bold tracking-tight mb-10">Common questions</h2>
+          <div className="divide-y divide-border">
+            {faqs.map((faq) => (
+              <div key={faq.question} className="py-6">
+                <h3 className="text-base font-semibold mb-2">{faq.question}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ───────────────────────────────────────────────────────── */}
+      <section>
         <div className="container py-24">
-          <div className="flex flex-col items-center text-center gap-6 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Ready to visualize your markdown?
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-12 flex flex-col items-center text-center gap-6">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-balance max-w-xl">
+              Ready to see your markdown differently?
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Start exploring your documents in a whole new way. No signup required.
+            <p className="text-muted-foreground max-w-md text-pretty leading-relaxed">
+              No signup. No install. Open the editor and paste your first document in 5 seconds.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" asChild>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button size="lg" className="gap-2" asChild>
                 <Link href="/editor">
-                  Launch Editor
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  Launch Editor <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button size="lg" variant="outline" className="gap-2" asChild>
                 <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
-                  <Github className="mr-2 h-4 w-4" />
-                  View on GitHub
+                  <Github className="h-4 w-4" />
+                  View source
                 </a>
               </Button>
             </div>

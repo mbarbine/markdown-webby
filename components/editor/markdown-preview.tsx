@@ -105,8 +105,8 @@ export function MarkdownPreview({ className }: MarkdownPreviewProps) {
 
   return (
     <div className={cn("h-full overflow-auto custom-scrollbar", className)}>
-      <article 
-        className="prose prose-zinc dark:prose-invert max-w-none p-6"
+      <article
+        className="prose dark:prose-invert max-w-none p-6"
         dangerouslySetInnerHTML={{ __html: renderedHtml }}
       />
     </div>

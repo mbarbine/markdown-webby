@@ -32,7 +32,7 @@ export default function PrivacyPage() {
           </Link>
         </Button>
 
-        <article className="prose prose-neutral dark:prose-invert max-w-3xl">
+        <article className="prose dark:prose-invert max-w-3xl">
           <h1>Privacy Policy</h1>
           <p className="lead">Last updated: {new Date().toLocaleDateString()}</p>
 
