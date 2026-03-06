@@ -1,11 +1,12 @@
 "use client"
 
-import { useEffect, useCallback, useRef } from "react"
+import { useEffect, useCallback, useRef, useState } from "react"
 import dynamic from "next/dynamic"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { EditorToolbar } from "@/components/editor/toolbar"
 import { OutlinePanel } from "@/components/editor/outline-panel"
 import { MarkdownPreview } from "@/components/editor/markdown-preview"
+import { AIChatPanel } from "@/components/editor/ai-chat-panel"
 import { SiteHeader } from "@/components/site-header"
 import { 
   ResizableHandle, 
@@ -13,7 +14,7 @@ import {
   ResizablePanelGroup 
 } from "@/components/ui/resizable"
 import { cn } from "@/lib/utils"
-import { graphToMarkdown } from "@/lib/markdown/parser"
+import { parseShareUrl } from "@/lib/export/utils"
 
 const MarkdownEditor = dynamic(
   () => import("@/components/editor/markdown-editor").then(mod => mod.MarkdownEditor),
@@ -27,6 +28,7 @@ const GraphViewer = dynamic(
 
 export default function EditorPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [showAI, setShowAI] = useState(false)
   const { 
     viewMode, 
     fullscreen, 
@@ -37,9 +39,22 @@ export default function EditorPage() {
     setLoading 
   } = useMarkdown()
 
-  // Initialize graph on mount
+  // Check for shared content in URL on mount
   useEffect(() => {
-    setContent(content)
+    const sharedContent = parseShareUrl()
+    if (sharedContent) {
+      setContent(sharedContent)
+    } else {
+      setContent(content)
+    }
+  }, [])
+
+  const handleInsertFromAI = useCallback((text: string) => {
+    setContent(content + "\n\n" + text)
+  }, [content, setContent])
+
+  const toggleAI = useCallback(() => {
+    setShowAI(prev => !prev)
   }, [])
 
   const handleImport = useCallback(() => {
@@ -115,7 +130,12 @@ ${content}
     <div className={cn("flex flex-col h-screen bg-background", fullscreen && "fixed inset-0 z-50")}>
       {!fullscreen && <SiteHeader />}
       
-      <EditorToolbar onImport={handleImport} onExport={handleExport} />
+      <EditorToolbar 
+        onImport={handleImport} 
+        onExport={handleExport} 
+        onToggleAI={toggleAI}
+        showAI={showAI}
+      />
       
       <input
         ref={fileInputRef}
@@ -125,75 +145,91 @@ ${content}
         className="hidden"
       />
 
-      <div className="flex-1 overflow-hidden">
-        {viewMode === "editor" && (
-          <ResizablePanelGroup direction="horizontal">
-            {viewSettings.showOutline && (
-              <>
-                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-                  <OutlinePanel />
+      <ResizablePanelGroup direction="horizontal" className="flex-1">
+        <ResizablePanel defaultSize={showAI ? 75 : 100} minSize={50}>
+          <div className="h-full overflow-hidden">
+            {viewMode === "editor" && (
+              <ResizablePanelGroup direction="horizontal">
+                {viewSettings.showOutline && (
+                  <>
+                    <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                      <OutlinePanel />
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                  </>
+                )}
+                <ResizablePanel defaultSize={80}>
+                  <MarkdownEditor />
                 </ResizablePanel>
-                <ResizableHandle withHandle />
-              </>
+              </ResizablePanelGroup>
             )}
-            <ResizablePanel defaultSize={80}>
-              <MarkdownEditor />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        )}
 
-        {viewMode === "split" && (
-          <ResizablePanelGroup direction="horizontal">
-            {viewSettings.showOutline && (
-              <>
-                <ResizablePanel defaultSize={15} minSize={10} maxSize={25}>
-                  <OutlinePanel />
+            {viewMode === "split" && (
+              <ResizablePanelGroup direction="horizontal">
+                {viewSettings.showOutline && (
+                  <>
+                    <ResizablePanel defaultSize={15} minSize={10} maxSize={25}>
+                      <OutlinePanel />
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                  </>
+                )}
+                <ResizablePanel defaultSize={35} minSize={25}>
+                  <MarkdownEditor />
                 </ResizablePanel>
                 <ResizableHandle withHandle />
-              </>
+                <ResizablePanel defaultSize={50} minSize={30}>
+                  <GraphViewer />
+                </ResizablePanel>
+              </ResizablePanelGroup>
             )}
-            <ResizablePanel defaultSize={35} minSize={25}>
-              <MarkdownEditor />
-            </ResizablePanel>
+
+            {viewMode === "graph" && (
+              <ResizablePanelGroup direction="horizontal">
+                {viewSettings.showOutline && (
+                  <>
+                    <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                      <OutlinePanel />
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                  </>
+                )}
+                <ResizablePanel defaultSize={80}>
+                  <GraphViewer />
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            )}
+
+            {viewMode === "preview" && (
+              <ResizablePanelGroup direction="horizontal">
+                {viewSettings.showOutline && (
+                  <>
+                    <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                      <OutlinePanel />
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                  </>
+                )}
+                <ResizablePanel defaultSize={80}>
+                  <MarkdownPreview className="bg-card" />
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            )}
+          </div>
+        </ResizablePanel>
+
+        {showAI && (
+          <>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={50} minSize={30}>
-              <GraphViewer />
+            <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
+              <AIChatPanel 
+                currentDocument={content} 
+                onInsert={handleInsertFromAI} 
+              />
             </ResizablePanel>
-          </ResizablePanelGroup>
+          </>
         )}
-
-        {viewMode === "graph" && (
-          <ResizablePanelGroup direction="horizontal">
-            {viewSettings.showOutline && (
-              <>
-                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-                  <OutlinePanel />
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-              </>
-            )}
-            <ResizablePanel defaultSize={80}>
-              <GraphViewer />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        )}
-
-        {viewMode === "preview" && (
-          <ResizablePanelGroup direction="horizontal">
-            {viewSettings.showOutline && (
-              <>
-                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-                  <OutlinePanel />
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-              </>
-            )}
-            <ResizablePanel defaultSize={80}>
-              <MarkdownPreview className="bg-card" />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        )}
-      </div>
+      </ResizablePanelGroup>
     </div>
   )
 }
