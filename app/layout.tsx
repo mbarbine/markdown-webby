@@ -41,6 +41,10 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://markdown.platphormnews.com"),
   alternates: {
     canonical: "/",
+    languages: {
+      "en": "https://markdown.platphormnews.com",
+      "x-default": "https://markdown.platphormnews.com",
+    },
     types: {
       "application/rss+xml": "/feed.xml",
       "application/json": "/feed.json",

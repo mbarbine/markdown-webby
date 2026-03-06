@@ -74,7 +74,8 @@ export function AIChatPanel({ currentDocument, onInsert }: AIChatPanelProps) {
         <span className="text-sm font-medium">AI Assistant</span>
       </div>
 
-      <ScrollArea className="flex-1 p-3" ref={scrollRef}>
+      <ScrollArea className="flex-1 p-3">
+        <div ref={scrollRef}>
         {messages.length === 0 ? (
           <div className="space-y-4">
             <div className="rounded-lg bg-muted/50 p-4 text-center">
@@ -174,9 +175,10 @@ export function AIChatPanel({ currentDocument, onInsert }: AIChatPanelProps) {
                   <span className="text-sm text-muted-foreground">Thinking...</span>
                 </div>
               </div>
-            )}
-          </div>
+          )}
+        </div>
         )}
+        </div>
       </ScrollArea>
 
       <form onSubmit={handleSubmit} className="border-t border-border p-3">

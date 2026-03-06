@@ -19,6 +19,7 @@ import {
   Share2,
   Terminal,
 } from "lucide-react"
+import { ApiCodeBlock } from "@/components/landing/api-code-block"
 
 export const metadata: Metadata = {
   title: "MarkdownTree — Visual Markdown Editor & Graph Viewer",
@@ -265,15 +266,15 @@ export default function HomePage() {
                 }}
               >
                 <svg className="w-full h-full" viewBox="0 0 540 360" preserveAspectRatio="xMidYMid meet">
-                  {/* Edges */}
-                  <line x1="80" y1="60" x2="200" y2="120" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
-                  <line x1="80" y1="60" x2="200" y2="210" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
-                  <line x1="200" y1="120" x2="340" y2="80" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
-                  <line x1="200" y1="120" x2="340" y2="140" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
-                  <line x1="200" y1="120" x2="340" y2="200" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
-                  <line x1="200" y1="210" x2="340" y2="280" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeOpacity="0.5" />
-                  <line x1="340" y1="80" x2="460" y2="60" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeOpacity="0.4" />
-                  <line x1="340" y1="80" x2="460" y2="110" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeOpacity="0.4" />
+                  {/* Edges — animated dash */}
+                  <line x1="80" y1="60" x2="200" y2="120" stroke="#22c55e" strokeWidth="1.5" strokeOpacity="0.45" className="edge-animated" />
+                  <line x1="80" y1="60" x2="200" y2="210" stroke="#22c55e" strokeWidth="1.5" strokeOpacity="0.45" className="edge-animated" style={{ animationDelay: "0.2s" }} />
+                  <line x1="200" y1="120" x2="340" y2="80" stroke="#a855f7" strokeWidth="1.5" strokeOpacity="0.4" className="edge-animated" style={{ animationDelay: "0.4s" }} />
+                  <line x1="200" y1="120" x2="340" y2="140" stroke="#a855f7" strokeWidth="1.5" strokeOpacity="0.4" className="edge-animated" style={{ animationDelay: "0.6s" }} />
+                  <line x1="200" y1="120" x2="340" y2="200" stroke="#a855f7" strokeWidth="1.5" strokeOpacity="0.4" className="edge-animated" style={{ animationDelay: "0.8s" }} />
+                  <line x1="200" y1="210" x2="340" y2="280" stroke="#a855f7" strokeWidth="1.5" strokeOpacity="0.4" className="edge-animated" style={{ animationDelay: "0.5s" }} />
+                  <line x1="340" y1="80" x2="460" y2="60" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeOpacity="0.35" className="edge-animated" style={{ animationDelay: "0.7s" }} />
+                  <line x1="340" y1="80" x2="460" y2="110" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeOpacity="0.35" className="edge-animated" style={{ animationDelay: "0.9s" }} />
 
                   {/* Root node */}
                   <g>
@@ -437,34 +438,7 @@ export default function HomePage() {
                 </Button>
               </div>
             </div>
-            <div className="rounded-xl border border-border bg-card overflow-hidden font-mono text-sm">
-              <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-muted/40">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-xs text-muted-foreground">POST /api/v1/transform</span>
-              </div>
-              <pre className="p-4 text-xs leading-6 overflow-x-auto text-foreground/80">
-{`{
-  "content": "# Hello\\n\\n## World",
-  "options": {
-    "includeText": true,
-    "direction": "RIGHT"
-  }
-}
-
-// → 200 OK
-{
-  "nodes": [
-    { "id": "n0", "type": "heading",
-      "depth": 1, "text": "Hello" },
-    { "id": "n1", "type": "heading",
-      "depth": 2, "text": "World" }
-  ],
-  "edges": [
-    { "from": "n0", "to": "n1" }
-  ]
-}`}
-              </pre>
-            </div>
+            <ApiCodeBlock />
           </div>
         </div>
       </section>

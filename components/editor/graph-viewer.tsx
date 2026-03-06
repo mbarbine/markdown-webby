@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
   ReactFlow,
+  ReactFlowProvider,
   Node,
   Edge,
   Background,
@@ -10,7 +11,6 @@ import {
   MiniMap,
   useNodesState,
   useEdgesState,
-  useReactFlow,
   NodeProps,
   Handle,
   Position,
@@ -178,7 +178,7 @@ const nodeTypes = {
   markdown: CustomNode,
 }
 
-export function GraphViewer() {
+function GraphViewerInner() {
   const containerRef = useRef<HTMLDivElement>(null)
   const { graph, selectedNodeId, highlightedNodes, collapsedNodes, toggleNodeCollapse, viewSettings, scale, setScale, position, setPosition } = useMarkdown()
   
@@ -349,6 +349,7 @@ export function GraphViewer() {
   return (
     <div ref={containerRef} className="h-full w-full graph-canvas">
       <ReactFlow
+        className="bg-canvas"
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -391,5 +392,13 @@ export function GraphViewer() {
         </Panel>
       </ReactFlow>
     </div>
+  )
+}
+
+export function GraphViewer() {
+  return (
+    <ReactFlowProvider>
+      <GraphViewerInner />
+    </ReactFlowProvider>
   )
 }
