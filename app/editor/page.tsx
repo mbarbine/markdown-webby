@@ -1,5 +1,9 @@
 "use client"
 
+declare global {
+  interface Window { __mdtreeOutlineInitialized?: boolean }
+}
+
 import { useEffect, useCallback, useRef, useState } from "react"
 import dynamic from "next/dynamic"
 import { useMarkdown } from "@/lib/store/use-markdown"
@@ -36,8 +40,33 @@ export default function EditorPage() {
     content, 
     graph,
     viewSettings,
+    updateViewSettings,
     setLoading 
   } = useMarkdown()
+
+  // Ensure outline is hidden by default on first load — persisted state may have it on
+  useEffect(() => {
+    if (typeof window !== "undefined" && !window.__mdtreeOutlineInitialized) {
+      window.__mdtreeOutlineInitialized = true
+      // Only force off if no explicit user toggle has happened (version guard)
+      const stored = window.localStorage.getItem("markdowntree-storage")
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          if (parsed?.state?.viewSettings?.showOutline === true) {
+            updateViewSettings({ showOutline: false })
+            // Rename key to prevent stale re-read
+            const v = window.localStorage.getItem("markdowntree-storage")
+            if (v) {
+              window.localStorage.setItem("markdowntree-v2", v)
+              window.localStorage.removeItem("markdowntree-storage")
+            }
+          }
+        } catch {}
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Check for shared content in URL on mount
   useEffect(() => {

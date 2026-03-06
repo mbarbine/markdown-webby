@@ -173,9 +173,8 @@ function CustomNode({ data, id }: NodeProps<CustomNodeData>) {
   )
 }
 
-const nodeTypes = {
-  markdown: CustomNode,
-}
+// Defined outside component — stable object reference across renders
+const NODE_TYPES = { markdown: CustomNode }
 
 function GraphViewerInner() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -224,8 +223,8 @@ function GraphViewerInner() {
     
     const direction = viewSettings.graphDirection
     const isHorizontal = direction === "RIGHT" || direction === "LEFT"
-    const spacing = viewSettings.nodeSpacing || 100
-    const nodeGap = 30
+    const spacing = Math.max(viewSettings.nodeSpacing || 80, 80)
+    const nodeGap = isHorizontal ? 24 : 32
     
     function calculateSubtreeSize(nodeId: string): { width: number; height: number } {
       const node = nodeMap.get(nodeId)
@@ -352,12 +351,11 @@ function GraphViewerInner() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
+        nodeTypes={NODE_TYPES}
         fitView
-        fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.1}
+        fitViewOptions={{ padding: 0.15, includeHiddenNodes: false }}
+        minZoom={0.05}
         maxZoom={2}
-        defaultViewport={{ x: 0, y: 0, zoom: scale }}
         proOptions={{ hideAttribution: true }}
       >
         <Background color="hsl(var(--muted-foreground))" gap={20} size={1} />

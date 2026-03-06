@@ -144,9 +144,9 @@ const initialState: MarkdownState = {
   collapsedNodes: [],
   viewSettings: {
     showMinimap: true,
-    showOutline: true,
+    showOutline: false,
     graphDirection: "RIGHT",
-    nodeSpacing: 100,
+    nodeSpacing: 80,
     edgeType: "smooth"
   },
   scale: 0.5,
