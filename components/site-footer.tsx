@@ -38,16 +38,16 @@ export function SiteFooter() {
 
           {/* Product */}
           <div>
-            <h4 className="font-semibold mb-4">Product</h4>
+            <h4 className="font-semibold mb-4">✨ Product</h4>
             <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
               <Link href="/editor" className="hover:text-foreground transition-colors">
-                Editor
+                ✏️ Editor
               </Link>
               <Link href="/docs" className="hover:text-foreground transition-colors">
-                Documentation
+                📚 Documentation
               </Link>
               <Link href="/api/docs" className="hover:text-foreground transition-colors">
-                API Reference
+                📡 API Reference
               </Link>
               <a 
                 href={siteConfig.links.github} 
@@ -55,45 +55,45 @@ export function SiteFooter() {
                 rel="noreferrer"
                 className="hover:text-foreground transition-colors"
               >
-                GitHub
+                ⭐ GitHub
               </a>
             </nav>
           </div>
 
           {/* Resources */}
           <div>
-            <h4 className="font-semibold mb-4">Resources</h4>
+            <h4 className="font-semibold mb-4">📎 Resources</h4>
             <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
               <Link href="/feed.xml" className="hover:text-foreground transition-colors">
-                RSS Feed
+                📰 RSS Feed
               </Link>
               <Link href="/sitemap.xml" className="hover:text-foreground transition-colors">
-                Sitemap
+                🗺️ Sitemap
               </Link>
               <Link href="/llms.txt" className="hover:text-foreground transition-colors">
-                LLM Discovery
+                🤖 LLM Discovery
               </Link>
-              <Link href="/.well-known/mcp.json" className="hover:text-foreground transition-colors">
-                MCP Config
-              </Link>
+              <a href="https://mcp.platphormnews.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
+                🔌 MCP Client
+              </a>
             </nav>
           </div>
 
           {/* Legal */}
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
+            <h4 className="font-semibold mb-4">📜 Legal</h4>
             <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
               <Link href="/privacy" className="hover:text-foreground transition-colors">
-                Privacy Policy
+                🔒 Privacy Policy
               </Link>
               <Link href="/terms" className="hover:text-foreground transition-colors">
-                Terms of Service
+                📋 Terms of Service
               </Link>
               <Link href="/accessibility" className="hover:text-foreground transition-colors">
-                Accessibility
+                ♿ Accessibility
               </Link>
               <Link href="/open-source" className="hover:text-foreground transition-colors">
-                Open Source
+                📜 Open Source
               </Link>
             </nav>
           </div>

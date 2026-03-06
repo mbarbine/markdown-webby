@@ -4,7 +4,7 @@ export const siteConfig = {
   url: "https://markdown.platphormnews.com",
   ogImage: "https://markdown.platphormnews.com/og-image.jpg",
   links: {
-    github: "https://github.com/mbarbine/jsontree",
+    github: "https://github.com/mbarbine/markdown-webby",
     twitter: "https://twitter.com/platphormnews",
   },
   creator: "Platphorm News",
