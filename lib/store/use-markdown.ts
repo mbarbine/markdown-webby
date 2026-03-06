@@ -89,46 +89,142 @@ interface MarkdownActions {
   getParentNode: (nodeId: string) => MarkdownNode | undefined
 }
 
-const defaultContent = `# Welcome to MarkdownTree
+const defaultContent = `# Headers
 
-Transform your markdown documents into interactive graph visualizations.
+# h1 Heading 8-)
+## h2 Heading
+### h3 Heading
+#### h4 Heading
+##### h5 Heading
+###### h6 Heading
 
-## Features
+Alternatively, for H1 and H2, an underline-ish style:
 
-### Visual Editor
-- **Live Preview**: See your changes in real-time
-- **Graph View**: Visualize document structure
-- **Split View**: Edit and preview side by side
+Alt-H1
+======
 
-### AI Enhancements
-- Smart formatting suggestions
-- Content summarization
-- Auto-completion
+Alt-H2
+------
 
-## Getting Started
+------
 
-1. Write your markdown in the editor
-2. Switch to Graph view to see the structure
-3. Click on nodes to navigate
-4. Export to various formats
+# Emphasis
 
-## Code Example
+Emphasis, aka italics, with *asterisks* or _underscores_.
+
+Strong emphasis, aka bold, with **asterisks** or __underscores__.
+
+Combined emphasis with **asterisks and _underscores_**.
+
+Strikethrough uses two tildes. ~~Scratch this.~~
+
+------
+
+# Lists
+
+1. First ordered list item
+2. Another item
+3. Actual numbers don't matter, just that it's a number
+4. And another item.
+
+* Unordered list can use asterisks
+- Or minuses
++ Or pluses
+
+1. Make my changes
+    1. Fix bug
+    2. Improve formatting
+2. Push my commits to GitHub
+3. Open a pull request
+
+------
+
+# Task lists
+
+- [x] Finish my changes
+- [ ] Push my commits to GitHub
+- [ ] Open a pull request
+- [x] @mentions, #refs, [links](), **formatting**, and tags supported
+
+------
+
+# Links
+
+[I'm an inline-style link](https://www.google.com)
+
+[I'm an inline-style link with title](https://www.google.com "Google's Homepage")
+
+------
+
+# Images
+
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+
+------
+
+# Code and Syntax Highlighting
+
+Inline \`code\` has \`back-ticks around\` it.
 
 \`\`\`javascript
-function hello() {
-  console.log("Hello, MarkdownTree!");
+function $initHighlight(block, cls) {
+  try {
+    if (cls.search(/\\bno\\-highlight\\b/) != -1)
+      return process(block, true, 0x0F)
+  } catch (e) {
+    /* handle exception */
+  }
 }
 \`\`\`
 
-> "The best way to understand complex documents is to visualize them."
+\`\`\`css
+body {
+  color: #F0F0F0;
+  background: #600;
+}
+\`\`\`
 
-## Links
+------
 
-[Visit our documentation](https://docs.platphormnews.com)
+# Tables
+
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
+------
+
+# Blockquotes
+
+> Blockquotes are very handy in email to emulate reply text.
+> This line is part of the same quote.
+
+> This is a very long line that will still be quoted properly when it wraps.
+
+------
+
+# Horizontal Rules
+
+Three or more...
 
 ---
 
-Made with love by Platphorm News
+Hyphens
+
+***
+
+Asterisks
+
+------
+
+# Inline HTML
+
+<dl>
+  <dt>Definition list</dt>
+  <dd>Is something people use sometimes.</dd>
+</dl>
 `
 
 const initialState: MarkdownState = {
@@ -319,7 +415,7 @@ export const useMarkdown = create<MarkdownState & MarkdownActions>()(
       }
     }),
     {
-      name: "markdowntree-v3",
+      name: "markdowntree-v4",
       partialize: (state) => ({
         content: state.content,
         viewSettings: state.viewSettings,

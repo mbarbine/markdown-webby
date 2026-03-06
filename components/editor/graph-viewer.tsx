@@ -11,6 +11,8 @@ import ReactFlow, {
   Panel,
   MarkerType,
   BackgroundVariant,
+  Handle,
+  Position,
   type Node,
   type Edge,
   type NodeProps,
@@ -23,71 +25,90 @@ import type { MarkdownNode } from "@/lib/markdown/parser"
 
 // ─── Node type colours ──────────────────────────────────────────────────────
 const NODE_COLOURS: Record<string, string> = {
-  heading:    "hsl(142 71% 45%)",   // emerald
-  paragraph:  "hsl(215 20% 65%)",   // muted blue-grey
-  codeBlock:  "hsl(270 60% 60%)",   // violet
-  list:       "hsl(199 89% 48%)",   // sky
-  blockquote: "hsl(38 92% 50%)",    // amber
-  table:      "hsl(316 68% 55%)",   // pink
-  image:      "hsl(173 80% 40%)",   // teal
-  link:       "hsl(142 71% 45%)",   // emerald (same as heading)
+  heading:       "hsl(142 71% 45%)",
+  paragraph:     "hsl(215 20% 65%)",
+  codeBlock:     "hsl(270 60% 60%)",
+  list:          "hsl(199 89% 48%)",
+  blockquote:    "hsl(38 92% 50%)",
+  table:         "hsl(316 68% 55%)",
+  image:         "hsl(173 80% 40%)",
+  link:          "hsl(142 71% 45%)",
   thematicBreak: "hsl(215 20% 50%)",
-  default:    "hsl(215 20% 55%)",
+  default:       "hsl(215 20% 55%)",
+}
+
+// ─── Node data shape ─────────────────────────────────────────────────────────
+interface MdNodeData {
+  markdownNode: MarkdownNode
+  isSelected: boolean
+  isHighlighted: boolean
+  onSelect: (id: string) => void
 }
 
 // ─── Custom node component ───────────────────────────────────────────────────
-// `useMarkdown` is called here so it is NOT in the nodeTypes object reference
-// itself — the component is defined once at module scope, never re-created.
-function MarkdownNodeComponent({ data, id }: NodeProps<{ markdownNode: MarkdownNode; isSelected: boolean; isHighlighted: boolean }>) {
-  const { selectNode } = useMarkdown()
+// IMPORTANT: This component must NOT call useMarkdown() — doing so creates a
+// new closure on every render, which React Flow detects as a new nodeTypes
+// object (error #002). Instead, onSelect is passed via node data.
+function MarkdownNodeComponent({ data, id }: NodeProps<MdNodeData>) {
   const node = data.markdownNode
   const colour = NODE_COLOURS[node.type] ?? NODE_COLOURS.default
 
   const label = useMemo(() => {
-    const raw = Array.isArray(node.text) ? node.text.join(" ") : node.text
+    const raw = Array.isArray(node.text) ? node.text.join(" ") : (node.text ?? "")
     if (!raw || raw === "Document") return node.type
-    return raw.length > 48 ? raw.slice(0, 45) + "…" : raw
+    return raw.length > 52 ? raw.slice(0, 49) + "…" : raw
   }, [node.text, node.type])
 
-  const depthSize: Record<number, string> = { 1: "text-sm font-bold", 2: "text-xs font-semibold", 3: "text-xs font-medium" }
-  const textClass = node.type === "heading" ? (depthSize[node.depth ?? 1] ?? "text-xs") : "text-xs"
+  const textClass =
+    node.type === "heading"
+      ? node.depth === 1 ? "text-sm font-bold"
+      : node.depth === 2 ? "text-xs font-semibold"
+      : "text-xs font-medium"
+      : "text-xs"
 
   return (
-    <div
-      onClick={() => selectNode(id)}
-      className={cn(
-        "rounded-md border px-3 py-2 cursor-pointer select-none min-w-[80px] max-w-[280px]",
-        "transition-all duration-150",
-        data.isSelected   && "ring-2 ring-offset-1 ring-offset-background",
-        data.isHighlighted && "ring-1",
-      )}
-      style={{
-        borderColor: colour,
-        background: `color-mix(in srgb, ${colour} 12%, hsl(var(--card)))`,
-        "--tw-ring-color": colour,
-      } as React.CSSProperties}
-    >
-      <div className="flex items-center gap-1.5">
-        <span
-          className="inline-block w-2 h-2 rounded-full flex-shrink-0"
-          style={{ background: colour }}
-        />
-        <span className={cn("leading-tight text-foreground truncate", textClass)}>
-          {label}
-        </span>
+    <>
+      {/* Target handle — where incoming edges connect */}
+      <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
+
+      <div
+        onClick={() => data.onSelect(id)}
+        className={cn(
+          "rounded-md border px-3 py-2 cursor-pointer select-none",
+          "min-w-[90px] max-w-[260px] w-fit",
+          "transition-shadow duration-150",
+          data.isSelected    && "shadow-[0_0_0_2px_var(--node-colour)]",
+          data.isHighlighted && "shadow-[0_0_0_1px_var(--node-colour)]",
+        )}
+        style={{
+          "--node-colour": colour,
+          borderColor: colour,
+          background: `color-mix(in srgb, ${colour} 14%, hsl(var(--card)))`,
+        } as React.CSSProperties}
+      >
+        <div className="flex items-center gap-1.5">
+          <span
+            className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+            style={{ background: colour }}
+          />
+          <span className={cn("leading-tight text-foreground truncate", textClass)}>
+            {label}
+          </span>
+        </div>
+        {node.type === "codeBlock" && node.data?.language && (
+          <span className="mt-0.5 text-[10px] text-muted-foreground font-mono block truncate">
+            {node.data.language}
+          </span>
+        )}
       </div>
-      {node.type === "codeBlock" && node.data?.language && (
-        <span className="mt-0.5 text-[10px] text-muted-foreground font-mono block">
-          {node.data.language}
-        </span>
-      )}
-    </div>
+
+      {/* Source handle — where outgoing edges start */}
+      <Handle type="source" position={Position.Right} style={{ opacity: 0 }} />
+    </>
   )
 }
 
-// ─── NODE_TYPES is a stable module-level constant ────────────────────────────
-// This is the ONLY way to avoid ReactFlow error #002.
-// It MUST be defined outside any component, never inside render, never in useMemo.
+// ─── NODE_TYPES: stable module-level constant — NEVER recreated ──────────────
 const NODE_TYPES = { markdown: MarkdownNodeComponent } as const
 
 // ─── Dagre layout helper ─────────────────────────────────────────────────────
@@ -143,11 +164,16 @@ function GraphViewerInner() {
   const {
     graph,
     selectedNodeId,
+    selectNode,
     highlightedNodes,
     collapsedNodes,
     viewSettings,
-    scale: storeScale,
   } = useMarkdown()
+
+  // Stable callback ref — never changes identity, safe to put in node data
+  const selectNodeRef = useRef(selectNode)
+  useEffect(() => { selectNodeRef.current = selectNode }, [selectNode])
+  const stableSelectNode = useMemo(() => (id: string) => selectNodeRef.current(id), [])
 
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
@@ -193,7 +219,8 @@ function GraphViewerInner() {
           markdownNode: n,
           isSelected: n.id === selectedNodeId,
           isHighlighted: highlightSet.has(n.id),
-        },
+          onSelect: stableSelectNode,
+        } satisfies MdNodeData,
       }))
 
     const rfEdges: Edge[] = graph.edges
@@ -211,7 +238,7 @@ function GraphViewerInner() {
     const laidOut = applyDagreLayout(rfNodes, rfEdges, direction, spacing)
     setNodes(laidOut)
     setEdges(rfEdges)
-  }, [graph, selectedNodeId, highlightSet, collapsedSet, viewSettings, setNodes, setEdges])
+  }, [graph, selectedNodeId, stableSelectNode, highlightSet, collapsedSet, viewSettings, setNodes, setEdges])
 
   const nodeCount = nodes.length
   const edgeCount = edges.length
