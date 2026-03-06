@@ -157,36 +157,42 @@ export default function HomePage() {
       </header>
 
       {/* ── HERO ──────────────────────────────────────────────────────── */}
-      <section className="relative border-b border-border/50">
-        {/* subtle grid bg */}
+      <section className="relative border-b border-border/50 overflow-hidden">
+        {/* Dot grid */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none opacity-30"
           style={{
-            backgroundImage:
-              "linear-gradient(hsl(var(--border)/0.4) 1px,transparent 1px),linear-gradient(90deg,hsl(var(--border)/0.4) 1px,transparent 1px)",
-            backgroundSize: "48px 48px",
+            backgroundImage: "radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
           }}
         />
-        <div className="relative container py-24 md:py-36">
+        {/* Emerald glow */}
+        <div
+          className="absolute -top-40 -left-40 w-[600px] h-[600px] pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, hsl(142 71% 45% / 0.08) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative container py-24 md:py-40">
           <div className="max-w-3xl">
-            <Badge variant="secondary" className="mb-6 gap-1.5 animate-fade-up">
-              <Sparkles className="h-3 w-3 text-primary" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground mb-8 animate-fade-up backdrop-blur-sm">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               AI-powered · Open source · MCP-ready
-            </Badge>
+            </div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance leading-[1.05] animate-fade-up-1">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance leading-[1.04] animate-fade-up-1">
               Markdown as a{" "}
               <span className="text-primary">living graph.</span>
             </h1>
 
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl text-pretty leading-relaxed animate-fade-up-2">
               MarkdownTree transforms any markdown document into an interactive node graph —
-              so structure, hierarchy and relationships are immediately visible. Edit,
-              explore, enhance with AI, and export in seconds.
+              structure, hierarchy, and relationships become immediately visible.
+              Edit, explore, enhance with AI, and export in seconds.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3 animate-fade-up-3">
-              <Button size="lg" className="gap-2" asChild>
+              <Button size="lg" className="gap-2 font-semibold" asChild>
                 <Link href="/editor">
                   Open Editor <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -197,7 +203,7 @@ export default function HomePage() {
                   Documentation
                 </Link>
               </Button>
-              <Button size="lg" variant="ghost" className="gap-2" asChild>
+              <Button size="lg" variant="ghost" className="gap-2 text-muted-foreground" asChild>
                 <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
                   <Github className="h-4 w-4" />
                   Star on GitHub
@@ -339,16 +345,14 @@ export default function HomePage() {
 
       {/* ── STATS ─────────────────────────────────────────────────────── */}
       <section className="border-b border-border/50">
-        <div className="container py-12">
-          <dl className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border">
-            {stats.map((s) => (
-              <div key={s.label} className="flex flex-col gap-1 bg-background px-6 py-8">
-                <dt className="text-3xl font-bold text-primary">{s.value}</dt>
-                <dd className="text-sm text-muted-foreground">{s.label}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+        <dl className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border/60">
+          {stats.map((s) => (
+            <div key={s.label} className="flex flex-col gap-1.5 px-8 py-10">
+              <dt className="text-4xl font-bold text-primary font-mono tracking-tight">{s.value}</dt>
+              <dd className="text-sm text-muted-foreground leading-relaxed">{s.label}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       {/* ── FEATURES ──────────────────────────────────────────────────── */}
@@ -460,28 +464,36 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ───────────────────────────────────────────────────────── */}
-      <section>
-        <div className="container py-24">
-          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-12 flex flex-col items-center text-center gap-6">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-balance max-w-xl">
-              Ready to see your markdown differently?
-            </h2>
-            <p className="text-muted-foreground max-w-md text-pretty leading-relaxed">
-              No signup. No install. Open the editor and paste your first document in 5 seconds.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Button size="lg" className="gap-2" asChild>
-                <Link href="/editor">
-                  Launch Editor <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="gap-2" asChild>
-                <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
-                  <Github className="h-4 w-4" />
-                  View source
-                </a>
-              </Button>
-            </div>
+      <section className="border-t border-border/50 relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse at 50% 0%, hsl(142 71% 45% / 0.06) 0%, transparent 60%)",
+          }}
+        />
+        <div className="relative container py-32 flex flex-col items-center text-center gap-6 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs text-primary mb-2">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+            Free forever, no account required
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-balance leading-[1.1]">
+            Ready to see your markdown differently?
+          </h2>
+          <p className="text-muted-foreground max-w-md text-pretty leading-relaxed text-lg">
+            Paste any document and get an interactive graph in under a second. No signup, no install.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mt-2">
+            <Button size="lg" className="gap-2 font-semibold px-8" asChild>
+              <Link href="/editor">
+                Launch Editor <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="gap-2" asChild>
+              <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
+                <Github className="h-4 w-4" />
+                View source
+              </a>
+            </Button>
           </div>
         </div>
       </section>

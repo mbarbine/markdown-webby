@@ -3,67 +3,100 @@
 @tailwind utilities;
 
 @layer base {
+  /* Dark-first: default tokens are the dark palette */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 98%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 142 71% 40%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 93%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 93%;
-    --muted-foreground: 240 3.8% 42%;
-    --accent: 142 71% 40%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 88%;
-    --input: 240 5.9% 88%;
-    --ring: 142 71% 40%;
-    --radius: 0.5rem;
-    /* Graph node tokens */
-    --node-heading: 142 71% 40%;
-    --node-code: 262 83% 58%;
-    --node-link: 217 91% 60%;
-    --node-list: 38 92% 50%;
-    --node-quote: 280 87% 65%;
-    --node-table: 173 80% 40%;
-    --canvas-bg: 240 5% 96%;
-    --canvas-grid: 240 5% 88%;
-  }
-
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 5.5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 5.5%;
-    --popover-foreground: 0 0% 98%;
+    --background: 222 47% 4%;
+    --foreground: 210 40% 96%;
+    --card: 222 47% 6%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 96%;
     --primary: 142 71% 45%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 3.7% 14%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 14%;
-    --muted-foreground: 240 5% 60%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 222 40% 10%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 222 40% 10%;
+    --muted-foreground: 215 20% 55%;
     --accent: 142 71% 45%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 40%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 13%;
-    --input: 240 3.7% 13%;
+    --accent-foreground: 222 47% 4%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 40% 96%;
+    --border: 222 40% 12%;
+    --input: 222 40% 12%;
     --ring: 142 71% 45%;
-    /* Graph node tokens dark */
+    --radius: 0.5rem;
+    /* Graph canvas */
+    --canvas-bg: 222 47% 3%;
+    --canvas-grid: 222 40% 10%;
+    /* Node type colours */
     --node-heading: 142 71% 45%;
     --node-code: 262 83% 68%;
     --node-link: 217 91% 70%;
-    --node-list: 38 92% 60%;
-    --node-quote: 280 87% 75%;
-    --node-table: 173 80% 50%;
-    --canvas-bg: 240 10% 5%;
-    --canvas-grid: 240 5% 11%;
+    --node-list: 38 92% 55%;
+    --node-quote: 316 68% 65%;
+    --node-table: 173 80% 45%;
+  }
+
+  /* Light mode override */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 8%;
+    --card: 0 0% 98%;
+    --card-foreground: 222 47% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 8%;
+    --primary: 142 71% 36%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 94%;
+    --secondary-foreground: 222 47% 8%;
+    --muted: 210 40% 94%;
+    --muted-foreground: 215 16% 45%;
+    --accent: 142 71% 36%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 40% 88%;
+    --input: 210 40% 88%;
+    --ring: 142 71% 36%;
+    --canvas-bg: 210 40% 97%;
+    --canvas-grid: 210 40% 88%;
+    --node-heading: 142 71% 36%;
+    --node-code: 262 83% 55%;
+    --node-link: 217 91% 55%;
+    --node-list: 38 92% 45%;
+    --node-quote: 316 68% 52%;
+    --node-table: 173 80% 36%;
+  }
+
+  /* Keep .dark as alias for backward compat with next-themes */
+  .dark {
+    --background: 222 47% 4%;
+    --foreground: 210 40% 96%;
+    --card: 222 47% 6%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 222 40% 10%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 222 40% 10%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 222 47% 4%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 40% 96%;
+    --border: 222 40% 12%;
+    --input: 222 40% 12%;
+    --ring: 142 71% 45%;
+    --canvas-bg: 222 47% 3%;
+    --canvas-grid: 222 40% 10%;
+    --node-heading: 142 71% 45%;
+    --node-code: 262 83% 68%;
+    --node-link: 217 91% 70%;
+    --node-list: 38 92% 55%;
+    --node-quote: 316 68% 65%;
+    --node-table: 173 80% 45%;
   }
 }
 
