@@ -3,7 +3,7 @@ import { MarkdownNodeType, markdownNodeTypes } from "@/lib/platphorm/config"
 export interface MarkdownNode {
   id: string
   type: MarkdownNodeType
-  text: string | string[]
+  text: string | string[] | string[][]
   depth?: number
   data: {
     raw?: string
