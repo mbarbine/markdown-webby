@@ -371,7 +371,7 @@ export default function HomePage() {
             </h2>
             <p className="mt-4 text-muted-foreground text-pretty leading-relaxed">
               From a powerful Monaco editor to an AI assistant to a fully documented API —
-              MarkdownTree is the tool you didn't know you were missing.
+              MarkdownTree is the tool you didn&apos;t know you were missing.
             </p>
           </div>
 
