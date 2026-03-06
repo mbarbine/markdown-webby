@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Dark-first: default tokens are the dark palette */
+  :root {
+    --background: 222 47% 4%;
+    --foreground: 210 40% 96%;
+    --card: 222 47% 6%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 222 40% 10%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 222 40% 10%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 222 47% 4%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 40% 96%;
+    --border: 222 40% 12%;
+    --input: 222 40% 12%;
+    --ring: 142 71% 45%;
+    --radius: 0.5rem;
+    /* Graph canvas */
+    --canvas-bg: 222 47% 3%;
+    --canvas-grid: 222 40% 10%;
+    /* Node type colours */
+    --node-heading: 142 71% 45%;
+    --node-code: 262 83% 68%;
+    --node-link: 217 91% 70%;
+    --node-list: 38 92% 55%;
+    --node-quote: 316 68% 65%;
+    --node-table: 173 80% 45%;
+  }
+
+  /* Light mode override */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 8%;
+    --card: 0 0% 98%;
+    --card-foreground: 222 47% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 8%;
+    --primary: 142 71% 36%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 94%;
+    --secondary-foreground: 222 47% 8%;
+    --muted: 210 40% 94%;
+    --muted-foreground: 215 16% 45%;
+    --accent: 142 71% 36%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 40% 88%;
+    --input: 210 40% 88%;
+    --ring: 142 71% 36%;
+    --canvas-bg: 210 40% 97%;
+    --canvas-grid: 210 40% 88%;
+    --node-heading: 142 71% 36%;
+    --node-code: 262 83% 55%;
+    --node-link: 217 91% 55%;
+    --node-list: 38 92% 45%;
+    --node-quote: 316 68% 52%;
+    --node-table: 173 80% 36%;
+  }
+
+  /* Keep .dark as alias for backward compat with next-themes */
+  .dark {
+    --background: 222 47% 4%;
+    --foreground: 210 40% 96%;
+    --card: 222 47% 6%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 222 40% 10%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 222 40% 10%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 222 47% 4%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 40% 96%;
+    --border: 222 40% 12%;
+    --input: 222 40% 12%;
+    --ring: 142 71% 45%;
+    --canvas-bg: 222 47% 3%;
+    --canvas-grid: 222 40% 10%;
+    --node-heading: 142 71% 45%;
+    --node-code: 262 83% 68%;
+    --node-link: 217 91% 70%;
+    --node-list: 38 92% 55%;
+    --node-quote: 316 68% 65%;
+    --node-table: 173 80% 45%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+  h1, h2, h3, h4, h5, h6 { @apply font-sans tracking-tight; }
+}
+
+/* Graph canvas */
+.graph-canvas {
+  background-color: hsl(var(--canvas-bg));
+  background-image: radial-gradient(circle, hsl(var(--canvas-grid)) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Markdown preview prose */
+.md-preview {
+  @apply prose prose-sm dark:prose-invert max-w-none;
+  @apply prose-headings:font-sans prose-headings:tracking-tight;
+  @apply prose-code:font-mono prose-code:text-primary;
+  @apply prose-a:text-primary prose-a:no-underline hover:prose-a:underline;
+  @apply prose-blockquote:border-primary;
+  @apply prose-pre:bg-card prose-pre:border prose-pre:border-border;
+}
+
+/* Scrollbar */
+.scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
+.scrollbar-thin::-webkit-scrollbar-track { @apply bg-transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { @apply bg-muted-foreground/25 rounded-full hover:bg-muted-foreground/40; }
+
+/* Monaco editor overrides */
+.monaco-editor { --vscode-editor-background: hsl(var(--card)) !important; }
+.monaco-editor .margin { background-color: hsl(var(--card)) !important; }
+
+/* Animations */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.4s ease-out both; }
+.animate-fade-up-1 { animation: fade-up 0.4s 0.1s ease-out both; }
+.animate-fade-up-2 { animation: fade-up 0.4s 0.2s ease-out both; }
+.animate-fade-up-3 { animation: fade-up 0.4s 0.3s ease-out both; }
+
+/* Graph edge */
+.edge-animated {
+  stroke-dasharray: 6;
+  animation: dash 1.2s linear infinite;
+}
+@keyframes dash { to { stroke-dashoffset: -12; } }
+
+/* Bento grid */
+.bento-card {
+  @apply relative rounded-2xl border border-border bg-card overflow-hidden p-6 flex flex-col gap-3;
+}
