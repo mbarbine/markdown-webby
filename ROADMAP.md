@@ -22,6 +22,7 @@ A living document outlining planned features, milestones, and the long-term visi
 - [x] Accessibility statement, privacy policy, terms of service
 
 ---
+Beep boop
 
 ## 🚧 v1.1 — Polish & I18N
 
