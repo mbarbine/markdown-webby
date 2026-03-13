@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { classNames } from "@/utility/classNames";
-import { firaMono } from "@/pages";
 
 export type ForeignNodeWrapper = {
   width: number | undefined;
@@ -19,7 +18,7 @@ export function ForeignNodeWrapper(props: ForeignNodeWrapper) {
       style={{ overflow: "hidden" }}
       {...(props.nodeId && { "data-node-id": props.nodeId })}
       className={classNames(
-        firaMono.className,
+        "font-mono",
         !props.isObject ? "text-center" : "",
         "pointer-events-none font-medium",
         props.isHighlighted ? "bg-[#ffd63427]" : "",
