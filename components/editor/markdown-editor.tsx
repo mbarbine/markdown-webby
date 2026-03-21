@@ -101,11 +101,28 @@ export function MarkdownEditor({ className }: MarkdownEditorProps) {
     monaco.editor.setTheme(resolvedTheme === "dark" ? "markdowntree-dark" : "markdowntree-light")
   }, [resolvedTheme])
 
+  // Debounce the AST parsing and ReactFlow graph update to avoid blocking the main thread on every keystroke
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+
   const handleChange: OnChange = useCallback((value) => {
     if (value !== undefined) {
-      updateContent(value)
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        updateContent(value)
+      }, 300)
     }
   }, [updateContent])
+
+  // Cleanup debounced timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [])
 
   // Jump to node line when selected
   useEffect(() => {
