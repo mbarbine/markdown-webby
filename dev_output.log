@@ -1,0 +1,16 @@
+
+> markdowntree@1.0.0 dev
+> next dev
+
+   ▲ Next.js 15.5.12
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
+   - Experiments (use with caution):
+     · serverActions
+
+ ✓ Starting...
+ ✓ Ready in 2.3s
+ ○ Compiling /editor ...
+ ✓ Compiled /editor in 20.4s (1771 modules)
+ GET /editor 200 in 23453ms
+ ✓ Compiled in 3.3s (783 modules)
