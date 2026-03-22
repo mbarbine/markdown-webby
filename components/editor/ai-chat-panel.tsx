@@ -142,6 +142,8 @@ export function AIChatPanel({ currentDocument, onInsert }: AIChatPanelProps) {
                           size="icon"
                           className="h-6 w-6 rounded-full bg-background shadow-sm"
                           onClick={() => handleCopy(text, message.id)}
+                          aria-label="Copy to clipboard"
+                          title="Copy to clipboard"
                         >
                           {copiedId === message.id ? (
                             <Check className="h-3 w-3 text-green-500" />
@@ -190,7 +192,7 @@ export function AIChatPanel({ currentDocument, onInsert }: AIChatPanelProps) {
             disabled={isLoading}
             className="flex-1"
           />
-          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+          <Button type="submit" size="icon" disabled={isLoading || !input.trim()} aria-label="Send message" title="Send message">
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
