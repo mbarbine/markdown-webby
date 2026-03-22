@@ -1,0 +1,3 @@
+## 2024-03-22 - [ReactFlow + Dagre Recalculation Bottleneck]
+**Learning:** Combining React Flow selection/highlight state updates with Dagre graph layouts in a single `useEffect` results in severe re-render performance bottlenecks on large graphs, as O(V+E) graph layout algorithms run on every simple boolean node interaction.
+**Action:** Always decouple structural data layout algorithms (using `useMemo` strictly tied to topology changes like collapsed states and spacing) from purely visual state node updates like selection or highlighting. Let `useEffect` map over the cached layout to merely flip the styling bits.

@@ -187,11 +187,10 @@ function GraphViewerInner() {
   const collapsedSet = useMemo(() => new Set(collapsedNodes), [collapsedNodes])
   const highlightSet = useMemo(() => new Set(highlightedNodes), [highlightedNodes])
 
-  useEffect(() => {
+  // Cache the structural topology and layout to avoid O(V+E) recalculations on mere selection changes
+  const baseLayout = useMemo(() => {
     if (!graph.nodes.length) {
-      setNodes([])
-      setEdges([])
-      return
+      return { laidNodes: [], rfEdges: [] }
     }
 
     const direction = DIR_MAP[viewSettings.graphDirection] ?? "LR"
@@ -223,9 +222,9 @@ function GraphViewerInner() {
         height:   NODE_H,
         data: {
           markdownNode:  n,
-          isSelected:    n.id === selectedNodeId,
-          isHighlighted: highlightSet.has(n.id),
-          onSelect,
+          isSelected:    false, // Will be updated in effect
+          isHighlighted: false, // Will be updated in effect
+          onSelect:      () => {}, // Placeholder, will be updated in effect
         },
       }))
 
@@ -251,16 +250,40 @@ function GraphViewerInner() {
         },
       }))
 
-    const laid = runDagre(rfNodes, rfEdges, direction, spacing)
-    setNodes(laid)
-    setEdges(rfEdges)
+    const laidNodes = runDagre(rfNodes, rfEdges, direction, spacing)
+    return { laidNodes, rfEdges }
   }, [
     graph,
-    selectedNodeId,
-    onSelect,
-    highlightSet,
     collapsedSet,
-    viewSettings,
+    viewSettings.graphDirection,
+    viewSettings.nodeSpacing,
+  ])
+
+  // Update nodes with current selection state and callbacks without recalculating layout
+  useEffect(() => {
+    if (!baseLayout.laidNodes.length) {
+      setNodes([])
+      setEdges([])
+      return
+    }
+
+    const updatedNodes = baseLayout.laidNodes.map((n) => ({
+      ...n,
+      data: {
+        ...n.data,
+        isSelected:    n.id === selectedNodeId,
+        isHighlighted: highlightSet.has(n.id),
+        onSelect,
+      },
+    }))
+
+    setNodes(updatedNodes)
+    setEdges(baseLayout.rfEdges)
+  }, [
+    baseLayout,
+    selectedNodeId,
+    highlightSet,
+    onSelect,
     setNodes,
     setEdges,
   ])
