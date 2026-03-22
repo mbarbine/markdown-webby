@@ -124,6 +124,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
               className="h-7 w-7"
               onClick={zoomOut}
               title="Zoom Out"
+              aria-label="Zoom Out"
             >
               <ZoomOut className="h-3.5 w-3.5" />
             </Button>
@@ -136,6 +137,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
               className="h-7 w-7"
               onClick={zoomIn}
               title="Zoom In"
+              aria-label="Zoom In"
             >
               <ZoomIn className="h-3.5 w-3.5" />
             </Button>
@@ -145,6 +147,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
               className="h-7 w-7"
               onClick={resetView}
               title="Reset View"
+              aria-label="Reset View"
             >
               <RotateCcw className="h-3.5 w-3.5" />
             </Button>
@@ -160,6 +163,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
               className="h-7 w-7"
               onClick={expandAll}
               title="Expand All"
+              aria-label="Expand All"
             >
               <Expand className="h-3.5 w-3.5" />
             </Button>
@@ -169,6 +173,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
               className="h-7 w-7"
               onClick={collapseAll}
               title="Collapse All"
+              aria-label="Collapse All"
             >
               <Shrink className="h-3.5 w-3.5" />
             </Button>
@@ -224,6 +229,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
               size="icon"
               className="absolute right-0 top-0 h-7 w-7"
               onClick={clearSearch}
+              title="Clear Search"
+              aria-label="Clear Search"
             >
               <X className="h-3.5 w-3.5" />
             </Button>
@@ -239,6 +246,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
               size="icon"
               className="h-7 w-7"
               onClick={prevSearchResult}
+              title="Previous search result"
+              aria-label="Previous search result"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
@@ -247,6 +256,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
               size="icon"
               className="h-7 w-7"
               onClick={nextSearchResult}
+              title="Next search result"
+              aria-label="Next search result"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </Button>
@@ -280,7 +291,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
       {/* Import/Export */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-7 w-7">
+          <Button variant="ghost" size="icon" className="h-7 w-7" title="Import" aria-label="Import">
             <Upload className="h-3.5 w-3.5" />
           </Button>
         </DropdownMenuTrigger>
@@ -296,7 +307,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-7 w-7">
+          <Button variant="ghost" size="icon" className="h-7 w-7" title="Export" aria-label="Export">
             <Download className="h-3.5 w-3.5" />
           </Button>
         </DropdownMenuTrigger>
@@ -320,7 +331,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
       {/* Settings */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-7 w-7">
+          <Button variant="ghost" size="icon" className="h-7 w-7" title="Settings" aria-label="Settings">
             <Settings2 className="h-3.5 w-3.5" />
           </Button>
         </DropdownMenuTrigger>
@@ -346,6 +357,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
         size="icon"
         className="h-7 w-7"
         onClick={toggleFullscreen}
+        title={fullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        aria-label={fullscreen ? "Exit fullscreen" : "Enter fullscreen"}
       >
         {fullscreen ? (
           <Minimize2 className="h-3.5 w-3.5" />
