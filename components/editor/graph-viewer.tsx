@@ -18,7 +18,7 @@ import ReactFlow, {
   type NodeProps,
 } from "reactflow"
 import "reactflow/dist/style.css"
-import dagre from "@dagrejs/dagre"
+import * as dagre from "@dagrejs/dagre"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { cn } from "@/lib/utils"
 import type { MarkdownNode } from "@/lib/markdown/parser"
