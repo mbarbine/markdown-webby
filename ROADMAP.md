@@ -45,6 +45,7 @@ Beep boop
 - [ ] 🧩 VS Code extension
 - [ ] 📦 npm package for headless graph parsing
 - [ ] 🔗 Webhook delivery for document events
+- [ ] 🐾 claws.platphormenews.com integration
 - [ ] 📈 Document analytics dashboard
 
 ---

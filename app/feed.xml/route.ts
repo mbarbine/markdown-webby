@@ -34,6 +34,14 @@ export async function GET() {
     </item>
     
     <item>
+    <item>
+      <title>Now on Platphorm News Network &amp; MCP</title>
+      <link>https://platphormnews.com/api/network/graph</link>
+      <guid isPermaLink="true">https://platphormnews.com/api/network/graph</guid>
+      <pubDate>${buildDate}</pubDate>
+      <description>MarkdownTree is registered on the Platphorm News Network. View the network graph and integrate via MCP at https://mcp.platphormnews.com</description>
+    </item>
+
       <title>API Documentation</title>
       <link>${siteConfig.url}/api/docs</link>
       <guid isPermaLink="true">${siteConfig.url}/api/docs</guid>
