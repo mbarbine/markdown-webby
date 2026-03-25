@@ -1,9 +1,11 @@
+import { Button } from "@/components/ui/button"
 import { Metadata } from "next"
 import Link from "next/link"
 import { siteConfig } from "@/lib/platphorm/config"
 import { SiteFooter } from "@/components/site-footer"
 import { Code2, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 export const metadata: Metadata = {
   title: "Accessibility Statement",
@@ -25,6 +27,18 @@ export default function AccessibilityPage() {
       </header>
 
       <main className="flex-1 container py-12">
+        <Breadcrumb className="mb-8">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild><Link href="/">Home</Link></BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Accessibility</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         <Button variant="ghost" size="sm" asChild className="mb-8">
           <Link href="/">
             <ArrowLeft className="h-4 w-4 mr-2" />

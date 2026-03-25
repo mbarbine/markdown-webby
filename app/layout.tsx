@@ -41,8 +41,12 @@ export const metadata: Metadata = {
     "ReactFlow",
   ],
   authors: [{ name: "Platphorm News", url: "https://platphormnews.com" }],
+  category: "technology",
+  classification: "Developer Tools",
+  formatDetection: { email: false, address: false, telephone: false },
   creator: "Platphorm News",
   publisher: "Platphorm News",
+  applicationName: "MarkdownTree",
   metadataBase: new URL("https://markdown.platphormnews.com"),
   alternates: {
     canonical: "/",

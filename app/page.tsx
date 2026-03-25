@@ -26,6 +26,8 @@ export const metadata: Metadata = {
   description:
     "Transform any markdown document into an interactive graph visualization. Edit, explore, navigate and export with AI-powered enhancements. Free and open source.",
   alternates: { canonical: "/" },
+  openGraph: { title: "MarkdownTree — Visual Markdown Editor & Graph Viewer", description: "Transform any markdown document into an interactive graph visualization. Edit, explore, navigate and export with AI-powered enhancements. Free and open source.", url: "https://markdown.platphormnews.com", type: "website", siteName: "MarkdownTree" },
+  twitter: { card: "summary_large_image", title: "MarkdownTree — Visual Markdown Editor & Graph Viewer", description: "Transform any markdown document into an interactive graph visualization. Edit, explore, navigate and export with AI-powered enhancements. Free and open source." }
 }
 
 const faqs = [

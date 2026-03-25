@@ -18,7 +18,7 @@
 - 📤 **Export anywhere** — Markdown, HTML, and JSON output
 - 🔗 **Shareable URLs** — share documents instantly, no account needed
 - 🌐 **I18N ready** — internationalization support baked in
-- 🔌 **MCP-compatible REST API** — integrate with external tools and agents
+- 🔌 **MCP-compatible REST API** — connected to [mcp.platphormnews.com](https://mcp.platphormnews.com) — integrate with external tools and agents
 - 🎨 **Dark / light theme** — respects system preference with manual toggle
 - ♿ **Accessible** — built following WCAG guidelines
 
@@ -76,6 +76,8 @@ MarkdownTree exposes a lightweight REST API for programmatic access:
 MarkdownTree is compatible with the **Model Context Protocol (MCP)**. Connect it to your MCP-enabled agents and tools via:
 
 👉 **[mcp.platphormnews.com](https://mcp.platphormnews.com)**
+
+MarkdownTree is proudly registered on the [Platphorm News Network](https://platphormnews.com/api/network/graph) and adheres to its [API standards](https://platphormnews.com/api/docs).
 
 ---
 
