@@ -259,7 +259,7 @@ function GraphViewerInner() {
     viewSettings.nodeSpacing,
   ])
 
-  // Update nodes with current selection state and callbacks without recalculating layout
+  // Apply layout changes (ONLY when topology/baseLayout changes)
   useEffect(() => {
     if (!baseLayout.laidNodes.length) {
       setNodes([])
@@ -267,26 +267,48 @@ function GraphViewerInner() {
       return
     }
 
-    const updatedNodes = baseLayout.laidNodes.map((n) => ({
-      ...n,
-      data: {
-        ...n.data,
-        isSelected:    n.id === selectedNodeId,
-        isHighlighted: highlightSet.has(n.id),
-        onSelect,
-      },
-    }))
-
-    setNodes(updatedNodes)
+    setNodes(
+      baseLayout.laidNodes.map((n) => ({
+        ...n,
+        data: {
+          ...n.data,
+          isSelected: n.id === selectedNodeId,
+          isHighlighted: highlightSet.has(n.id),
+          onSelect,
+        },
+      }))
+    )
     setEdges(baseLayout.rfEdges)
-  }, [
-    baseLayout,
-    selectedNodeId,
-    highlightSet,
-    onSelect,
-    setNodes,
-    setEdges,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baseLayout, setNodes, setEdges]) // Intentionally omit selection state to avoid layout trashing
+
+  // Update nodes with current selection state and callbacks without recalculating layout
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((n) => {
+        const isSelected = n.id === selectedNodeId
+        const isHighlighted = highlightSet.has(n.id)
+
+        // Only clone and update if styling/selection state actually changed
+        if (
+          n.data.isSelected !== isSelected ||
+          n.data.isHighlighted !== isHighlighted ||
+          n.data.onSelect !== onSelect
+        ) {
+          return {
+            ...n,
+            data: {
+              ...n.data,
+              isSelected,
+              isHighlighted,
+              onSelect,
+            },
+          }
+        }
+        return n
+      })
+    )
+  }, [selectedNodeId, highlightSet, onSelect, setNodes])
 
   return (
     <div className="h-full w-full bg-slate-950">
