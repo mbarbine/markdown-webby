@@ -60,7 +60,7 @@ export function SiteHeader() {
           {/* File Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8" title="File menu" aria-label="File menu">
                 <FileText className="h-4 w-4" />
                 <span className="sr-only">File menu</span>
               </Button>
@@ -83,7 +83,7 @@ export function SiteHeader() {
           </DropdownMenu>
 
           {/* Docs */}
-          <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8" asChild title="Documentation" aria-label="Documentation">
             <Link href="/docs">
               <BookOpen className="h-4 w-4" />
               <span className="sr-only">Documentation</span>
@@ -91,7 +91,7 @@ export function SiteHeader() {
           </Button>
 
           {/* GitHub */}
-          <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8" asChild title="GitHub" aria-label="GitHub">
             <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
               <Github className="h-4 w-4" />
               <span className="sr-only">GitHub</span>
@@ -104,6 +104,8 @@ export function SiteHeader() {
             size="icon"
             className="h-8 w-8"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            title="Toggle theme"
+            aria-label="Toggle theme"
           >
             <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -113,7 +115,7 @@ export function SiteHeader() {
           {/* Mobile Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden">
+              <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" title="Menu" aria-label="Menu">
                 <Menu className="h-4 w-4" />
                 <span className="sr-only">Menu</span>
               </Button>
