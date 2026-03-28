@@ -67,8 +67,7 @@ function OutlineItemComponent({ item, level, selectedId, collapsedIds, onSelect,
 
   return (
     <div>
-      <button
-        onClick={() => onSelect(item.id)}
+      <div
         className={cn(
           "flex items-center gap-1.5 w-full px-2 py-1 text-left text-sm rounded-md transition-colors",
           "hover:bg-muted",
@@ -78,11 +77,10 @@ function OutlineItemComponent({ item, level, selectedId, collapsedIds, onSelect,
       >
         {hasChildren ? (
           <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onToggle(item.id)
-            }}
+            onClick={() => onToggle(item.id)}
             className="p-0.5 hover:bg-muted rounded"
+            aria-label={isCollapsed ? `Expand ${displayText}` : `Collapse ${displayText}`}
+            aria-expanded={!isCollapsed}
           >
             {isCollapsed ? (
               <ChevronRight className="h-3 w-3 text-muted-foreground" />
@@ -94,17 +92,24 @@ function OutlineItemComponent({ item, level, selectedId, collapsedIds, onSelect,
           <span className="w-4" />
         )}
         
-        <span className="text-muted-foreground">
-          {item.type === "heading" ? getHeadingIcon(item.depth || 1) : typeIcons[item.type] || <FileText className="h-3.5 w-3.5" />}
-        </span>
-        
-        <span className={cn(
-          "truncate",
-          item.type === "heading" && "font-medium"
-        )}>
-          {displayText}
-        </span>
-      </button>
+        <button
+          onClick={() => onSelect(item.id)}
+          className="flex flex-1 items-center gap-1.5 overflow-hidden text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          aria-label={`Select ${displayText}`}
+          aria-current={isSelected ? "true" : undefined}
+        >
+          <span className="text-muted-foreground shrink-0">
+            {item.type === "heading" ? getHeadingIcon(item.depth || 1) : typeIcons[item.type] || <FileText className="h-3.5 w-3.5" />}
+          </span>
+
+          <span className={cn(
+            "truncate",
+            item.type === "heading" && "font-medium"
+          )}>
+            {displayText}
+          </span>
+        </button>
+      </div>
       
       {hasChildren && !isCollapsed && (
         <div>
