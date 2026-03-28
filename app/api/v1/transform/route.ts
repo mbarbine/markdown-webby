@@ -20,9 +20,10 @@ export async function POST(request: Request) {
       return errors.badRequest("markdown field is required and must be a string")
     }
 
-    const { nodes, edges } = parseMarkdownToGraph(markdown)
-    const outline = generateOutline(markdown)
-    const stats = getDocumentStats(markdown)
+    const graph = parseMarkdownToGraph(markdown)
+    const { nodes, edges } = graph
+    const outline = generateOutline(markdown, graph)
+    const stats = getDocumentStats(markdown, graph)
 
     return apiSuccess({
       nodes,

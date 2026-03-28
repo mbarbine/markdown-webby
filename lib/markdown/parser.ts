@@ -622,8 +622,8 @@ export function parseMarkdown(markdown: string): MarkdownGraph {
 // Alias for API routes
 export const parseMarkdownToGraph = parseMarkdown
 
-export function generateOutline(markdown: string): { text: string; level: number; id: string }[] {
-  const graph = parseMarkdown(markdown)
+export function generateOutline(markdown: string, existingGraph?: MarkdownGraph): { text: string; level: number; id: string }[] {
+  const graph = existingGraph || parseMarkdown(markdown)
   return graph.nodes
     .filter(n => n.type === "heading")
     .map(n => ({
@@ -633,7 +633,7 @@ export function generateOutline(markdown: string): { text: string; level: number
     }))
 }
 
-export function getDocumentStats(markdown: string): {
+export function getDocumentStats(markdown: string, existingGraph?: MarkdownGraph): {
   characters: number
   words: number
   lines: number
@@ -642,7 +642,7 @@ export function getDocumentStats(markdown: string): {
   links: number
   images: number
 } {
-  const graph = parseMarkdown(markdown)
+  const graph = existingGraph || parseMarkdown(markdown)
   const lines = markdown.split("\n")
   const words = markdown.split(/\s+/).filter(w => w.length > 0).length
 
