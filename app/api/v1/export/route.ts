@@ -27,8 +27,9 @@ export async function POST(request: Request) {
         })
 
       case "json": {
-        const { nodes, edges } = parseMarkdownToGraph(markdown)
-        const outline = generateOutline(markdown)
+        const graph = parseMarkdownToGraph(markdown)
+        const { nodes, edges } = graph
+        const outline = generateOutline(markdown, graph)
         return apiSuccess({
           markdown,
           graph: { nodes, edges },

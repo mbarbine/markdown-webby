@@ -10,9 +10,10 @@ const markdownTools = {
       markdown: z.string().describe("The markdown content to analyze"),
     }),
     execute: async ({ markdown }) => {
-      const { nodes, edges } = parseMarkdownToGraph(markdown)
-      const stats = getDocumentStats(markdown)
-      const outline = generateOutline(markdown)
+      const graph = parseMarkdownToGraph(markdown)
+      const { nodes, edges } = graph
+      const stats = getDocumentStats(markdown, graph)
+      const outline = generateOutline(markdown, graph)
       return {
         nodeCount: nodes.length,
         edgeCount: edges.length,
