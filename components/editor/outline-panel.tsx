@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useEffect, useState } from "react"
+import { useShallow } from "zustand/react/shallow"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -134,7 +135,17 @@ export function OutlinePanel() {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
-  const { graph, selectedNodeId, selectNode, collapsedNodes, toggleNodeCollapse } = useMarkdown()
+  // ⚡ Bolt: useShallow prevents the entire outline tree from re-rendering
+  // on unrelated store updates (like viewMode or cursor position changes).
+  const { graph, selectedNodeId, selectNode, collapsedNodes, toggleNodeCollapse } = useMarkdown(
+    useShallow((state) => ({
+      graph: state.graph,
+      selectedNodeId: state.selectedNodeId,
+      selectNode: state.selectNode,
+      collapsedNodes: state.collapsedNodes,
+      toggleNodeCollapse: state.toggleNodeCollapse,
+    }))
+  )
 
   const outline = useMemo(() => {
     // Build hierarchical outline from graph

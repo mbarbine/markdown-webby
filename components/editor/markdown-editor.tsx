@@ -3,6 +3,7 @@
 import { useRef, useCallback, useEffect } from "react"
 import Editor, { OnMount, OnChange } from "@monaco-editor/react"
 import { useTheme } from "next-themes"
+import { useShallow } from "zustand/react/shallow"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { cn } from "@/lib/utils"
 
@@ -13,7 +14,17 @@ interface MarkdownEditorProps {
 export function MarkdownEditor({ className }: MarkdownEditorProps) {
   const editorRef = useRef<any>(null)
   const { resolvedTheme } = useTheme()
-  const { content, updateContent, selectedNodeId, getNodeById } = useMarkdown()
+
+  // ⚡ Bolt: Extracting specific properties with useShallow stops the massive
+  // Monaco editor wrapper from re-rendering on every selection or view change.
+  const { content, updateContent, selectedNodeId, getNodeById } = useMarkdown(
+    useShallow((state) => ({
+      content: state.content,
+      updateContent: state.updateContent,
+      selectedNodeId: state.selectedNodeId,
+      getNodeById: state.getNodeById,
+    }))
+  )
 
   const handleEditorMount: OnMount = useCallback((editor, monaco) => {
     editorRef.current = editor

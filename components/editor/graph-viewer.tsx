@@ -19,6 +19,7 @@ import ReactFlow, {
 } from "reactflow"
 import "reactflow/dist/style.css"
 import * as dagre from "@dagrejs/dagre"
+import { useShallow } from "zustand/react/shallow"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { cn } from "@/lib/utils"
 import type { MarkdownNode } from "@/lib/markdown/parser"
@@ -170,8 +171,19 @@ function runDagre(
 
 // ─── Inner viewer ─────────────────────────────────────────────────────────────
 function GraphViewerInner() {
+  // ⚡ Bolt: useShallow ensures the graph canvas only re-renders when relevant
+  // data changes, significantly reducing jank during unrelated text edits.
   const { graph, selectedNodeId, highlightedNodes, collapsedNodes, viewSettings, selectNode } =
-    useMarkdown()
+    useMarkdown(
+      useShallow((state) => ({
+        graph: state.graph,
+        selectedNodeId: state.selectedNodeId,
+        highlightedNodes: state.highlightedNodes,
+        collapsedNodes: state.collapsedNodes,
+        viewSettings: state.viewSettings,
+        selectNode: state.selectNode,
+      }))
+    )
 
   // Stable onSelect via ref — never changes identity, safe in node data
   const selectRef = useRef(selectNode)
