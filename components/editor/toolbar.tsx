@@ -12,6 +12,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { useShallow } from "zustand/react/shallow"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import {
   PanelLeftClose,
@@ -47,6 +48,8 @@ interface EditorToolbarProps {
 }
 
 export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: EditorToolbarProps) {
+  // ⚡ Bolt: Selecting only required properties using useShallow prevents
+  // the toolbar from uselessly re-rendering on every keystroke in the editor.
   const {
     viewMode,
     setViewMode,
@@ -68,7 +71,30 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
     viewSettings,
     updateViewSettings,
     hasChanges,
-  } = useMarkdown()
+  } = useMarkdown(
+    useShallow((state) => ({
+      viewMode: state.viewMode,
+      setViewMode: state.setViewMode,
+      fullscreen: state.fullscreen,
+      toggleFullscreen: state.toggleFullscreen,
+      scale: state.scale,
+      zoomIn: state.zoomIn,
+      zoomOut: state.zoomOut,
+      resetView: state.resetView,
+      searchQuery: state.searchQuery,
+      setSearchQuery: state.setSearchQuery,
+      searchResults: state.searchResults,
+      currentSearchIndex: state.currentSearchIndex,
+      nextSearchResult: state.nextSearchResult,
+      prevSearchResult: state.prevSearchResult,
+      clearSearch: state.clearSearch,
+      expandAll: state.expandAll,
+      collapseAll: state.collapseAll,
+      viewSettings: state.viewSettings,
+      updateViewSettings: state.updateViewSettings,
+      hasChanges: state.hasChanges,
+    }))
+  )
 
   return (
     <div className="flex items-center gap-1 p-2 border-b border-border bg-card">

@@ -99,7 +99,10 @@ function renderMarkdown(content: string): string {
 }
 
 export function MarkdownPreview({ className }: MarkdownPreviewProps) {
-  const { content } = useMarkdown()
+  // ⚡ Bolt: Using a targeted selector prevents this expensive component
+  // from re-rendering (and reconciling large HTML strings) when unrelated
+  // store state (like hover or selection) changes.
+  const content = useMarkdown(state => state.content)
 
   const renderedHtml = useMemo(() => renderMarkdown(content), [content])
 
