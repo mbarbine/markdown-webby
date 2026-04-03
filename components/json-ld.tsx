@@ -79,7 +79,9 @@ export function JsonLd({ type = "WebApplication", data = {} }: JsonLdProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas[type]) }}
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(schemas[type]).replace(/</g, '\\u003c'),
+      }}
     />
   )
 }
