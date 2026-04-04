@@ -8,6 +8,21 @@ interface MarkdownPreviewProps {
   className?: string
 }
 
+// 🛡️ Sentinel: Sanitize URLs to prevent XSS via dangerous protocols
+// and escape quotes to prevent attribute breakout.
+const sanitizeUrl = (url: string) => {
+  const normalized = url.trim().toLowerCase()
+  if (
+    normalized.startsWith("javascript:") ||
+    normalized.startsWith("vbscript:") ||
+    normalized.startsWith("data:text/html")
+  ) {
+    return "#" // Block execution of malicious scripts
+  }
+  // Escape quotes to prevent breaking out of the href/src attribute
+  return url.replace(/"/g, "&quot;").replace(/'/g, "&#x27;")
+}
+
 // Simple markdown to HTML renderer
 function renderMarkdown(content: string): string {
   let html = content
@@ -48,10 +63,14 @@ function renderMarkdown(content: string): string {
   html = html.replace(/^\d+\. (.+)$/gm, '<li class="ml-6 list-decimal">$1</li>')
 
   // Images
-  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-lg my-4" />')
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
+    return `<img src="${sanitizeUrl(src)}" alt="${alt.replace(/"/g, "&quot;")}" class="max-w-full rounded-lg my-4" />`
+  })
 
   // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">$1</a>')
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => {
+    return `<a href="${sanitizeUrl(href)}" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">${text}</a>`
+  })
 
   // Bold
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold">$1</strong>')
