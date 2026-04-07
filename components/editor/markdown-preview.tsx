@@ -8,6 +8,27 @@ interface MarkdownPreviewProps {
   className?: string
 }
 
+function sanitizeAttribute(value: string, isUrl: boolean = false, allowDataImage: boolean = false): string {
+  let sanitized = value.replace(/"/g, "&quot;").replace(/'/g, "&#39;")
+  if (isUrl) {
+    const decoded = value.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    const normalized = decoded.replace(/[\s\x00-\x1F\x7F]/g, '').toLowerCase()
+
+    if (normalized.startsWith('javascript:') || normalized.startsWith('vbscript:')) {
+      return '#'
+    }
+
+    if (normalized.startsWith('data:')) {
+      if (allowDataImage && normalized.startsWith('data:image/')) {
+        // allow data:image/ URIs
+      } else {
+        return '#'
+      }
+    }
+  }
+  return sanitized
+}
+
 // Simple markdown to HTML renderer
 function renderMarkdown(content: string): string {
   let html = content
@@ -48,10 +69,17 @@ function renderMarkdown(content: string): string {
   html = html.replace(/^\d+\. (.+)$/gm, '<li class="ml-6 list-decimal">$1</li>')
 
   // Images
-  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-lg my-4" />')
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => {
+    const safeUrl = sanitizeAttribute(url, true, true)
+    const safeAlt = sanitizeAttribute(alt)
+    return `<img src="${safeUrl}" alt="${safeAlt}" class="max-w-full rounded-lg my-4" />`
+  })
 
   // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">$1</a>')
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+    const safeUrl = sanitizeAttribute(url, true)
+    return `<a href="${safeUrl}" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">${text}</a>`
+  })
 
   // Bold
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold">$1</strong>')
