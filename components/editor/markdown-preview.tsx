@@ -8,6 +8,28 @@ interface MarkdownPreviewProps {
   className?: string
 }
 
+// 🛡️ Sentinel: Sanitize attributes to prevent XSS (e.g. quote breakout, javascript: URIs)
+function sanitizeAttribute(attr: string): string {
+  if (!attr) return ""
+
+  const lowerAttr = attr.toLowerCase().trim()
+  // Block dangerous protocols
+  if (lowerAttr.startsWith('javascript:') || lowerAttr.startsWith('vbscript:')) {
+    return '#'
+  }
+  // Block data URIs unless they are images
+  if (lowerAttr.startsWith('data:') && !lowerAttr.startsWith('data:image/')) {
+    return '#'
+  }
+
+  // Escape quotes and HTML brackets to prevent attribute breakout
+  return attr
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
 // Simple markdown to HTML renderer
 function renderMarkdown(content: string): string {
   let html = content
@@ -48,10 +70,14 @@ function renderMarkdown(content: string): string {
   html = html.replace(/^\d+\. (.+)$/gm, '<li class="ml-6 list-decimal">$1</li>')
 
   // Images
-  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-lg my-4" />')
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
+    return `<img src="${sanitizeAttribute(src)}" alt="${sanitizeAttribute(alt)}" class="max-w-full rounded-lg my-4" />`
+  })
 
   // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">$1</a>')
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => {
+    return `<a href="${sanitizeAttribute(href)}" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">${text}</a>`
+  })
 
   // Bold
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold">$1</strong>')
