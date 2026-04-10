@@ -3,6 +3,7 @@
 import { useMemo } from "react"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { cn } from "@/lib/utils"
+import { sanitizeUrl, sanitizeAttribute } from "@/lib/security/utils"
 
 interface MarkdownPreviewProps {
   className?: string
@@ -48,10 +49,14 @@ function renderMarkdown(content: string): string {
   html = html.replace(/^\d+\. (.+)$/gm, '<li class="ml-6 list-decimal">$1</li>')
 
   // Images
-  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full rounded-lg my-4" />')
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => {
+    return `<img src="${sanitizeUrl(url, true)}" alt="${sanitizeAttribute(alt)}" class="max-w-full rounded-lg my-4" />`
+  })
 
   // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">$1</a>')
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+    return `<a href="${sanitizeUrl(url)}" class="text-primary hover:underline" target="_blank" rel="noopener noreferrer">${text}</a>`
+  })
 
   // Bold
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold">$1</strong>')
