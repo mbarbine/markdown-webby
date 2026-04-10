@@ -1,5 +1,6 @@
 import { apiSuccess, errors, corsHeaders } from "@/lib/api/utils"
 import { parseMarkdownToGraph, generateOutline } from "@/lib/markdown/parser"
+import { sanitizeUrl, sanitizeAttribute } from "@/lib/security/utils"
 
 type ExportFormat = "markdown" | "json" | "html"
 
@@ -59,7 +60,10 @@ export async function POST(request: Request) {
 
 function convertMarkdownToHtml(markdown: string): string {
   // Basic markdown to HTML conversion
-  let html = markdown
+  // First escape raw HTML tags to prevent arbitrary script injection
+  let html = markdown.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+
+  html = html
     // Headings
     .replace(/^######\s+(.*)$/gm, "<h6>$1</h6>")
     .replace(/^#####\s+(.*)$/gm, "<h5>$1</h5>")
@@ -75,10 +79,14 @@ function convertMarkdownToHtml(markdown: string): string {
     .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     // Links and images
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" />')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => {
+      return `<img src="${sanitizeUrl(url, true)}" alt="${sanitizeAttribute(alt)}" />`
+    })
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+      return `<a href="${sanitizeUrl(url)}">${text}</a>`
+    })
     // Blockquotes
-    .replace(/^>\s+(.*)$/gm, "<blockquote>$1</blockquote>")
+    .replace(/^&gt;\s+(.*)$/gm, "<blockquote>$1</blockquote>")
     // Horizontal rules
     .replace(/^---$/gm, "<hr />")
     // Paragraphs
