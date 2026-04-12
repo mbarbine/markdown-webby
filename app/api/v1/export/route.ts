@@ -1,5 +1,6 @@
 import { apiSuccess, errors, corsHeaders } from "@/lib/api/utils"
 import { parseMarkdownToGraph, generateOutline } from "@/lib/markdown/parser"
+import DOMPurify from "isomorphic-dompurify"
 
 type ExportFormat = "markdown" | "json" | "html"
 
@@ -60,6 +61,10 @@ export async function POST(request: Request) {
 function convertMarkdownToHtml(markdown: string): string {
   // Basic markdown to HTML conversion
   let html = markdown
+    // Escape HTML first to preserve code blocks
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
     // Headings
     .replace(/^######\s+(.*)$/gm, "<h6>$1</h6>")
     .replace(/^#####\s+(.*)$/gm, "<h5>$1</h5>")
@@ -78,11 +83,13 @@ function convertMarkdownToHtml(markdown: string): string {
     .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" />')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
     // Blockquotes
-    .replace(/^>\s+(.*)$/gm, "<blockquote>$1</blockquote>")
+    .replace(/^&gt;\s+(.*)$/gm, "<blockquote>$1</blockquote>")
     // Horizontal rules
     .replace(/^---$/gm, "<hr />")
     // Paragraphs
     .replace(/\n\n/g, "</p><p>")
+
+  const sanitizedHtml = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } })
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -100,7 +107,7 @@ function convertMarkdownToHtml(markdown: string): string {
   </style>
 </head>
 <body>
-  <p>${html}</p>
+  <p>${sanitizedHtml}</p>
 </body>
 </html>`
 }
