@@ -5,3 +5,7 @@
 ## 2024-10-24 - [API Route Redundant AST Parsing Bottleneck]
 **Learning:** API routes performing full document transformations or exports often re-parse the entire markdown string into an AST multiple times (e.g., for `nodes`/`edges`, `outline`, and `stats`), leading to unnecessary 3x O(N) overhead.
 **Action:** When working with API routes that build various document derivatives, always parse the AST once and pass the resulting object graph down to the specialized generation functions.
+
+## 2024-11-20 - [Zustand Store Re-render Bottleneck on Root Components]
+**Learning:** Destructuring state directly from an un-selected Zustand store object (e.g., `const { prop } = useStore()`) causes the component to re-render on *every* store update, even for properties the component doesn't use. When this happens in a root component (like `EditorPage`), it forces a cascading re-render of the entire application structure.
+**Action:** Always extract state from Zustand stores using individual targeted selectors (`state => state.property`) or `useShallow` from `zustand/react/shallow` when extracting multiple properties.
