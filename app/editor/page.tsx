@@ -1,4 +1,5 @@
 "use client"
+import { useShallow } from "zustand/react/shallow"
 
 import { useEffect, useCallback, useRef, useState } from "react"
 import dynamic from "next/dynamic"
@@ -29,15 +30,17 @@ const GraphViewer = dynamic(
 export default function EditorPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showAI, setShowAI] = useState(false)
-  const { 
-    viewMode, 
-    fullscreen, 
-    setContent, 
-    content, 
-    graph,
-    viewSettings,
-    setLoading 
-  } = useMarkdown()
+  const { viewMode, fullscreen, setContent, content, graph, viewSettings, setLoading } = useMarkdown(
+    useShallow((state) => ({
+      viewMode: state.viewMode,
+      fullscreen: state.fullscreen,
+      setContent: state.setContent,
+      content: state.content,
+      graph: state.graph,
+      viewSettings: state.viewSettings,
+      setLoading: state.setLoading,
+    }))
+  )
 
   // Check for shared content in URL on mount
   useEffect(() => {
