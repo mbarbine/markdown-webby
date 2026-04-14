@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback, useRef, useState } from "react"
 import dynamic from "next/dynamic"
+import { useShallow } from "zustand/react/shallow"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { EditorToolbar } from "@/components/editor/toolbar"
 import { OutlinePanel } from "@/components/editor/outline-panel"
@@ -29,6 +30,9 @@ const GraphViewer = dynamic(
 export default function EditorPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showAI, setShowAI] = useState(false)
+
+  // ⚡ Bolt: Extracting specific properties with useShallow stops the page
+  // wrapper from re-rendering on every unrelated store update (e.g. selection).
   const { 
     viewMode, 
     fullscreen, 
@@ -37,7 +41,17 @@ export default function EditorPage() {
     graph,
     viewSettings,
     setLoading 
-  } = useMarkdown()
+  } = useMarkdown(
+    useShallow((state) => ({
+      viewMode: state.viewMode,
+      fullscreen: state.fullscreen,
+      setContent: state.setContent,
+      content: state.content,
+      graph: state.graph,
+      viewSettings: state.viewSettings,
+      setLoading: state.setLoading,
+    }))
+  )
 
   // Check for shared content in URL on mount
   useEffect(() => {
