@@ -105,6 +105,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
           size="sm"
           className="h-7 px-2 rounded-sm"
           onClick={() => setViewMode("editor")}
+          title="Editor View"
+          aria-label="Editor View"
         >
           <Code2 className="h-3.5 w-3.5 mr-1" />
           <span className="hidden sm:inline">Editor</span>
@@ -114,6 +116,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
           size="sm"
           className="h-7 px-2 rounded-sm"
           onClick={() => setViewMode("split")}
+          title="Split View"
+          aria-label="Split View"
         >
           <Columns2 className="h-3.5 w-3.5 mr-1" />
           <span className="hidden sm:inline">Split</span>
@@ -123,6 +127,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
           size="sm"
           className="h-7 px-2 rounded-sm"
           onClick={() => setViewMode("graph")}
+          title="Graph View"
+          aria-label="Graph View"
         >
           <Network className="h-3.5 w-3.5 mr-1" />
           <span className="hidden sm:inline">Graph</span>
@@ -132,6 +138,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
           size="sm"
           className="h-7 px-2 rounded-sm"
           onClick={() => setViewMode("preview")}
+          title="Preview View"
+          aria-label="Preview View"
         >
           <Eye className="h-3.5 w-3.5 mr-1" />
           <span className="hidden sm:inline">Preview</span>
@@ -210,7 +218,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
           {/* Direction Toggle */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-7 px-2">
+              <Button variant="ghost" size="sm" className="h-7 px-2" title="Graph Direction" aria-label="Graph Direction">
                 {viewSettings.graphDirection === "RIGHT" ? (
                   <ArrowRight className="h-3.5 w-3.5 mr-1" />
                 ) : (
@@ -307,6 +315,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
         size="sm" 
         className="h-7 px-2 text-primary"
         onClick={onToggleAI}
+        title="AI Enhance"
+        aria-label="AI Enhance"
       >
         <Sparkles className="h-3.5 w-3.5 mr-1" />
         <span className="hidden sm:inline">AI</span>
