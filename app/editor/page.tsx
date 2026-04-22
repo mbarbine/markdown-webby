@@ -1,4 +1,5 @@
 "use client"
+import { useShallow } from "zustand/react/shallow"
 
 import { useEffect, useCallback, useRef, useState } from "react"
 import dynamic from "next/dynamic"
