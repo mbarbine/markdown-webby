@@ -4,3 +4,6 @@
 ## 2024-10-24 - Responsive Utility Classes and Accessible Names
 **Learning:** Discovered an accessibility trap when building responsive toolbars: applying responsive utility classes (like Tailwind's `hidden sm:inline`) to button text creates accidental icon-only buttons on mobile devices. When the text is hidden, the button loses its accessible name for screen readers on smaller screen sizes.
 **Action:** Always provide explicit `aria-label`s and `title` attributes on buttons that rely on text visibility toggling via responsive utilities, treating them effectively as icon-only buttons for accessibility purposes. Ensure all input fields (like `<Input>`) are explicitly labeled even if visual context implies their purpose.
+## 2026-04-15 - Accessible Responsive Icon Buttons
+**Learning:** Using responsive utility classes like `hidden sm:inline` to hide text inside interactive elements (like buttons and links) creates a silent accessibility issue on mobile. It effectively turns them into icon-only elements without an accessible name.
+**Action:** When using responsive utility classes to hide text inside interactive elements, always explicitly provide `aria-label` and `title` attributes. This ensures they maintain an accessible name for screen readers, as they effectively become icon-only buttons on mobile devices.
