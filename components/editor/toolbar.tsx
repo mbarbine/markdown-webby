@@ -138,8 +138,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
           size="sm"
           className="h-7 px-2 rounded-sm"
           onClick={() => setViewMode("preview")}
-          title="Preview View"
-          aria-label="Preview View"
+          title="Preview Mode"
+          aria-label="Preview Mode"
         >
           <Eye className="h-3.5 w-3.5 mr-1" />
           <span className="hidden sm:inline">Preview</span>
@@ -256,6 +256,7 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-7 w-40 pl-7 pr-7 text-xs"
+            aria-label="Search markdown"
           />
           {searchQuery && (
             <Button
@@ -315,8 +316,8 @@ export function EditorToolbar({ onImport, onExport, onToggleAI, showAI }: Editor
         size="sm" 
         className="h-7 px-2 text-primary"
         onClick={onToggleAI}
-        title="AI Enhance"
-        aria-label="AI Enhance"
+        title="Toggle AI Chat"
+        aria-label="Toggle AI Chat"
       >
         <Sparkles className="h-3.5 w-3.5 mr-1" />
         <span className="hidden sm:inline">AI</span>
