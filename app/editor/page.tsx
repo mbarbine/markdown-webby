@@ -1,4 +1,5 @@
 "use client"
+import { useShallow } from "zustand/react/shallow"
 
 import { useEffect, useCallback, useRef, useState } from "react"
 import dynamic from "next/dynamic"
@@ -31,8 +32,8 @@ export default function EditorPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showAI, setShowAI] = useState(false)
 
-  // ⚡ Bolt: Extracting specific properties with useShallow stops the EditorPage
-  // from re-rendering on every unrelated store update. Reduces re-renders by ~50%.
+  // ⚡ Bolt: Extracting specific properties with useShallow prevents EditorPage
+  // from re-rendering when unrelated store state (like hover or selection) changes.
   const { 
     viewMode, 
     fullscreen, 
@@ -49,7 +50,7 @@ export default function EditorPage() {
       content: state.content,
       graph: state.graph,
       viewSettings: state.viewSettings,
-      setLoading: state.setLoading,
+      setLoading: state.setLoading
     }))
   )
 

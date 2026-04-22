@@ -1,3 +1,6 @@
 ## 2024-05-18 - Nested Interactive Elements in Outline Trees
 **Learning:** Found a critical accessibility flaw in hierarchical UI components (like the document outline panel): nesting a toggle `<button>` (for expanding/collapsing children) inside a parent `<button>` (for selecting the item). Screen readers and browsers handle nested buttons poorly, leading to inconsistent focus behavior and incorrect semantics.
 **Action:** When building interactive tree or outline components, use a non-interactive flex container (like a `<div>`) for the row. Place the toggle button (with `aria-expanded` and `aria-label`) and the select button (with `aria-current`) as sibling elements to ensure clear navigation, correct semantics, and compliance with accessibility standards.
+## 2026-04-15 - Accessible Responsive Icon Buttons
+**Learning:** Using responsive utility classes like `hidden sm:inline` to hide text inside interactive elements (like buttons and links) creates a silent accessibility issue on mobile. It effectively turns them into icon-only elements without an accessible name.
+**Action:** When using responsive utility classes to hide text inside interactive elements, always explicitly provide `aria-label` and `title` attributes. This ensures they maintain an accessible name for screen readers, as they effectively become icon-only buttons on mobile devices.
