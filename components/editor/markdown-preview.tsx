@@ -3,6 +3,7 @@
 import { useMemo } from "react"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { cn } from "@/lib/utils"
+import DOMPurify from "isomorphic-dompurify"
 
 interface MarkdownPreviewProps {
   className?: string
@@ -104,7 +105,10 @@ export function MarkdownPreview({ className }: MarkdownPreviewProps) {
   // store state (like hover or selection) changes.
   const content = useMarkdown(state => state.content)
 
-  const renderedHtml = useMemo(() => renderMarkdown(content), [content])
+  const renderedHtml = useMemo(() => {
+    const rawHtml = renderMarkdown(content)
+    return DOMPurify.sanitize(rawHtml, { USE_PROFILES: { html: true } })
+  }, [content])
 
   return (
     <div className={cn("h-full overflow-auto custom-scrollbar", className)}>
