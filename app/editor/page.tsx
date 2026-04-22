@@ -3,6 +3,7 @@ import { useShallow } from "zustand/react/shallow"
 
 import { useEffect, useCallback, useRef, useState } from "react"
 import dynamic from "next/dynamic"
+import { useShallow } from "zustand/react/shallow"
 import { useMarkdown } from "@/lib/store/use-markdown"
 import { EditorToolbar } from "@/components/editor/toolbar"
 import { OutlinePanel } from "@/components/editor/outline-panel"
@@ -30,7 +31,18 @@ const GraphViewer = dynamic(
 export default function EditorPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showAI, setShowAI] = useState(false)
-  const { viewMode, fullscreen, setContent, content, graph, viewSettings, setLoading } = useMarkdown(
+
+  // ⚡ Bolt: Extracting specific properties with useShallow prevents EditorPage
+  // from re-rendering when unrelated store state (like hover or selection) changes.
+  const { 
+    viewMode, 
+    fullscreen, 
+    setContent, 
+    content, 
+    graph,
+    viewSettings,
+    setLoading 
+  } = useMarkdown(
     useShallow((state) => ({
       viewMode: state.viewMode,
       fullscreen: state.fullscreen,
@@ -38,7 +50,7 @@ export default function EditorPage() {
       content: state.content,
       graph: state.graph,
       viewSettings: state.viewSettings,
-      setLoading: state.setLoading,
+      setLoading: state.setLoading
     }))
   )
 
